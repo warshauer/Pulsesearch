@@ -367,3 +367,146 @@ class PulsesearchCanvas(FigureCanvas):
 
     def updateLastPoint(self, x0 = [], x1 = [], y0 = [], y1 = []):
         self._updateLastPoint(x0, x1, y0, y1)
+
+class plotCanvasDL(FigureCanvas):
+    def __init__(self, parent, xlabel = '', ylabel = '', autolim = True , xlimits = [0, 150], ylimits = [0, 300], windowlength = 0, plot_dict = None, line_dict = None, last_point = False):
+        super().__init__(mpl.figure.Figure())
+        # plot_dict = {ax_key:{'ylabel':'', 'ylimits':[,]}, }
+        # line_dict = {ax_key:{line_key:{kwargs for line}}}
+        self.parent = parent
+        self.autolim = autolim
+        print('hm?')
+        #self.patch.set_facecolor((255,255,255))
+
+        self._axes = {}
+        if plot_dict != None:
+            self._ak = list(plot_dict.keys())
+        elif line_dict != None:
+            self._ak = list(line_dict.keys())
+        else:
+            self._ak = [0]
+        if plot_dict == None:
+            self._pd = {}
+            for k in self._ak:
+                self._pd[k] = {}
+                self._pd[k]['ylabel'] = ylabel
+                self._pd[k]['ylimits'] = ylimits
+        else:
+            self._pd = plot_dict
+        if line_dict == None:
+            self._ld = {}
+            for k in self._ak:
+                self._pd[k]['lk'] = [0]
+                self._ld[k] = {}
+                self._ld[k][0] = {}
+        else:
+            self._ld = line_dict
+        self._last_point = last_point
+        
+        self._axes[self._ak[0]] = self.figure.subplots()
+        self._axes[self._ak[0]].set_ylabel(self._pd[self._ak[0]]['ylabel'], fontsize=20)
+        self._axes[self._ak[0]].set_xlabel(xlabel, fontsize=20)
+        #self._axes[self._ak[0]].tick_params(axis='y', colors='tab:orange')
+        self._axes[self._ak[0]].grid()
+        self._axes[self._ak[0]].set_facecolor((0,0,0))
+        self._xlimits = xlimits
+        for i in range(1,len(self._ak)):
+            self._axes[self._ak[i]] = self._axes[self._ak[0]].twinx()
+            self._axes[self._ak[i]].spines.right.set_position(("axes", 1+.07*(i-1)))
+            self._axes[self._ak[i]].tick_params(axis='y', labelsize = 7)
+            self._axes[self._ak[i]].set_ylabel(self._pd[self._ak[i]]['ylabel'], fontsize=16)
+
+        self._lines = {}
+        self._lp = {}
+        self._staticlines = {}
+        for k in self._ak:
+            self._lp[k] = {}
+            self._lines[k] = {}
+            self._staticlines[k] = {}
+            for key in self._ld[k]:
+                self._lines[k][key], = self._axes[k].plot([], [], **self._ld[k][key])
+                if self._last_point:
+                    self._lp[k][key], = self._axes[k].plot([], [], ms = 5,color = 'cyan',marker = 'D',ls = '')
+
+        self._window_length = windowlength # maximum actually shown on the window, this we can add the ability to adjust to look further bag etc
+        return
+    
+    def update_plot(self, x, y):
+        if type(y) == dict:
+            # x is a list, y = {ax_key0:{line_key0:ydata, line_key1:ydata}, ...}
+            self._update_canvas(x, y)
+        else:
+            y = {self._ak[0]:{list(self._lines[self.ax[0]].keys())[0]:y}}
+            self._update_canvas(x, y)
+
+    def add_static_line(self, x, y, name = 0, ax = None, **kwargs):
+        # x is list, y is list, name is key for the line, ax is axis key, all kwargs go into .plot()
+        # to delete a static line, just write over its name with x = [], y = []
+        if ax == None:
+            ax = self._ak[0]
+        self._staticlines[ax][name], = self._axes[ax].plot(x, y, **kwargs)
+
+    def set_ylimit(self, index, value, axis = None):
+        if axis == None:
+            self._pd[self._ak[0]]['ylimits'][index] = value
+        else:
+            self._pd[axis]['ylimits'][index] = value
+
+    def set_xlimit(self, index, value):
+        self._xlimits[index] = value
+
+    def set_window_length(self, window_length):
+        self._window_length = window_length
+
+    def _limiter(self):
+        if self.autolim:
+            for ax in self._axes.keys():
+                self._axes[ax].relim()
+                self._axes[ax].autoscale_view()
+        else:
+            for ax in self._axes.keys():
+                self._axes[ax].set_xlim(self._xlimits[0], self._xlimits[1])
+                self._axes[ax].set_ylim(self._pd[ax]['ylimits'][0], self._pd[ax]['ylimits'][1])
+
+    def _update_canvas(self, x, y):
+        # x is a list, y = {ax_key0:{line_key0:ydata, line_key1:ydata}, ...}
+        for ax in self._ak:
+            for li in self._lines[ax].keys():
+                if li in y[ax].keys():
+                    self._lines[ax][li].set_data( x[-self._window_length:], y[ax][li][-self._window_length:] )
+                    if self._last_point:
+                        self._lp[ax][li].set_data( x[-1], y[ax][li][-1] )
+                else:
+                    self._lines[ax][li].set_data( [], [] )
+                    if self._last_point:
+                        self._lp[ax][li].set_data( [], [] )
+
+        self._limiter()
+        self.draw()
+        return
+
+    def _updateCanvas(self, x, y):
+        # x is a list, y = {ax_key0:{line_key0:ydata, line_key1:ydata}, ...}
+        for ax in self._ak:
+            for li in self._lines[ax].keys():
+                if li in y[ax].keys():
+                    self._lines[ax][li].set_data( x[-self._window_length:], y[ax][li][-self._window_length:] )
+                    if self._last_point:
+                        self._lp[ax][li].set_data( x[-1], y[ax][li][-1] )
+                else:
+                    self._lines[ax][li].set_data( [], [] )
+                    if self._last_point:
+                        self._lp[ax][li].set_data( [], [] )
+        self._limiter()
+        return
+    
+    def updateCanvas(self, x, y):
+        if type(y) == dict:
+            # x is a list, y = {ax_key0:{line_key0:ydata, line_key1:ydata}, ...}
+            self._updateCanvas(x, y)
+        else:
+            y = {self._ak[0]:{list(self._lines[self.ax[0]].keys())[0]:y}}
+            self._updateCanvas(x, y)
+
+    def _drawPlot(self):
+        self.draw()

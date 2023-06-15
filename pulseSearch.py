@@ -23,9 +23,10 @@ from warsh_comms import smsClient
 from instrumentControl import esp301_GPIB, sr830
 import time
 from scipy.fft import fft, fftfreq
+from scanProg import DLscanWindow
 
 class pulsesearchWindow(QtWidgets.QMainWindow):
-    def __init__(self, whoami = 'pulseSearch', version = 'v1.2', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
+    def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = uic.loadUi('pulsesearch.ui',self) # swap this to pyui5 instead, then we may export it out to a class to make generic, contain and sort widgets and variables
         self.resize(1700, 1000)
@@ -64,8 +65,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.timeConstants = [0,0]
 
         self.quickFFT = quickFFTWindow(self)
+        self.scanWindow = DLscanWindow(self)
 
         self.PB_quickFFT.clicked.connect(lambda : self._openWindow(self.quickFFT))
+        self.PB_scans.clicked.connect(self._openScans)
         self.PB_connect.clicked.connect(self._connectInstruments)
         self.invert = [1,1]
         self.CB_invert1.stateChanged.connect(lambda : self._invertChange(0, self.CB_invert1.isChecked()))
@@ -91,29 +94,27 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
         if True:
             self.sVals = {}
-            self.sVals[1] = {'home':0.00, 'pos':0, 'linked':False, 'linkedstage':0, 'linkeddir':1, 'children':[]}
-            self.sVals[2] = {'home':0.00, 'pos':0, 'linked':False, 'linkedstage':0, 'linkeddir':1, 'children':[]}
-            self.sVals[3] = {'home':0.00, 'pos':0, 'linked':False, 'linkedstage':0, 'linkeddir':1, 'children':[]}
+            for stage in range(1,5):
+                self.sVals[stage] = {'home':0.00, 'pos':0, 'linked':False, 'linkedstage':0, 'linkeddir':1, 'children':[]}
 
             self.sWidgets = {}
             self.sWidgets[1] = {'sn':self.PB_sn0, 'sp':self.PB_sp0, 'sethome':self.PB_sethome0, 'returnhome':self.PB_returnhome0, 'mn':self.PB_mn0, 'mp':self.PB_mp0, 'linkedstage':self.CB_linkedstage0, 
-                                'linkeddir':self.CB_linkeddir0, 'ss':self.SB_ss0, 'si':self.SB_si0, 'pmm':self.LE_pmm0, 'pps':self.LE_pps0, 'psteps':self.LE_psteps0, 'home':self.LE_home0, 'stop':self.PB_stop0}
+                                'linkeddir':self.CB_linkeddir0, 'ss':self.SB_ss0, 'si':self.SB_si0, 'multiplier':self.SB_multiplier0, 'pmm':self.LE_pmm0, 'pps':self.LE_pps0, 'home':self.LE_home0, 'stop':self.PB_stop0}
             self.sWidgets[2] = {'sn':self.PB_sn1, 'sp':self.PB_sp1, 'sethome':self.PB_sethome1, 'returnhome':self.PB_returnhome1, 'mn':self.PB_mn1, 'mp':self.PB_mp1, 'linkedstage':self.CB_linkedstage1, 
-                                'linkeddir':self.CB_linkeddir1, 'ss':self.SB_ss1, 'si':self.SB_si1, 'pmm':self.LE_pmm1, 'pps':self.LE_pps1, 'psteps':self.LE_psteps1, 'home':self.LE_home1, 'stop':self.PB_stop1}
+                                'linkeddir':self.CB_linkeddir1, 'ss':self.SB_ss1, 'si':self.SB_si1, 'multiplier':self.SB_multiplier1, 'pmm':self.LE_pmm1, 'pps':self.LE_pps1, 'home':self.LE_home1, 'stop':self.PB_stop1}
             self.sWidgets[3] = {'sn':self.PB_sn2, 'sp':self.PB_sp2, 'sethome':self.PB_sethome2, 'returnhome':self.PB_returnhome2, 'mn':self.PB_mn2, 'mp':self.PB_mp2, 'linkedstage':self.CB_linkedstage2, 
-                                'linkeddir':self.CB_linkeddir2, 'ss':self.SB_ss2, 'si':self.SB_si2, 'pmm':self.LE_pmm2, 'pps':self.LE_pps2, 'psteps':self.LE_psteps2, 'home':self.LE_home2, 'stop':self.PB_stop2}
-
-
+                                'linkeddir':self.CB_linkeddir2, 'ss':self.SB_ss2, 'si':self.SB_si2, 'multiplier':self.SB_multiplier2, 'pmm':self.LE_pmm2, 'pps':self.LE_pps2, 'home':self.LE_home2, 'stop':self.PB_stop2}
+            self.sWidgets[4] = {'sn':self.PB_sn3, 'sp':self.PB_sp3, 'sethome':self.PB_sethome3, 'returnhome':self.PB_returnhome3, 'mn':self.PB_mn3, 'mp':self.PB_mp3, 'linkedstage':self.CB_linkedstage3, 
+                                'linkeddir':self.CB_linkeddir3, 'ss':self.SB_ss3, 'si':self.SB_si3, 'multiplier':self.SB_multiplier3, 'pmm':self.LE_pmm3, 'pps':self.LE_pps3, 'home':self.LE_home3, 'stop':self.PB_stop3}
+            
             # why didn't this work in a for loop :(
             self.sWidgets[3]['sn'].clicked.connect(lambda : self._move_stage_step(3, -1))
             self.sWidgets[3]['sp'].clicked.connect(lambda : self._move_stage_step(3, 1))
             self.sWidgets[3]['mn'].clicked.connect(lambda : self._move_stage_continuous(3, -1))
             self.sWidgets[3]['mp'].clicked.connect(lambda : self._move_stage_continuous(3, 1))
             self.sWidgets[3]['stop'].clicked.connect(self._stop_stage_continuous)
-
             self.sWidgets[3]['sethome'].clicked.connect(lambda : self._set_home(3, float(self.sVals[3]['pos'] ))) # finish
             self.sWidgets[3]['returnhome'].clicked.connect(lambda : self._return_to_home(3)) # finish
-
             self.sWidgets[3]['linkedstage'].currentIndexChanged.connect(lambda : self._set_stage_link( 3, self.sWidgets[3]['linkedstage'].currentIndex()))
 
             self.sWidgets[1]['sn'].clicked.connect(lambda : self._move_stage_step(1, -1))
@@ -121,10 +122,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.sWidgets[1]['mn'].clicked.connect(lambda : self._move_stage_continuous(1, -1))
             self.sWidgets[1]['mp'].clicked.connect(lambda : self._move_stage_continuous(1, 1))
             self.sWidgets[1]['stop'].clicked.connect(self._stop_stage_continuous)
-
             self.sWidgets[1]['sethome'].clicked.connect(lambda : self._set_home(1, float(self.sVals[1]['pos'] ))) # finish
             self.sWidgets[1]['returnhome'].clicked.connect(lambda : self._return_to_home(1)) # finish
-
             self.sWidgets[1]['linkedstage'].currentIndexChanged.connect(lambda : self._set_stage_link( 1, self.sWidgets[1]['linkedstage'].currentIndex()))
 
             self.sWidgets[2]['sn'].clicked.connect(lambda : self._move_stage_step(2, -1))
@@ -132,15 +131,23 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.sWidgets[2]['mn'].clicked.connect(lambda : self._move_stage_continuous(2, -1))
             self.sWidgets[2]['mp'].clicked.connect(lambda : self._move_stage_continuous(2, 1))
             self.sWidgets[2]['stop'].clicked.connect(self._stop_stage_continuous)
-
             self.sWidgets[2]['sethome'].clicked.connect(lambda : self._set_home(2, float(self.sVals[2]['pos'] ))) # finish
             self.sWidgets[2]['returnhome'].clicked.connect(lambda : self._return_to_home(2)) # finish
-
             self.sWidgets[2]['linkedstage'].currentIndexChanged.connect(lambda : self._set_stage_link( 2, self.sWidgets[2]['linkedstage'].currentIndex()))
+
+            self.sWidgets[4]['sn'].clicked.connect(lambda : self._move_stage_step(4, -1))
+            self.sWidgets[4]['sp'].clicked.connect(lambda : self._move_stage_step(4, 1))
+            self.sWidgets[4]['mn'].clicked.connect(lambda : self._move_stage_continuous(4, -1))
+            self.sWidgets[4]['mp'].clicked.connect(lambda : self._move_stage_continuous(4, 1))
+            self.sWidgets[4]['stop'].clicked.connect(self._stop_stage_continuous)
+            self.sWidgets[4]['sethome'].clicked.connect(lambda : self._set_home(4, float(self.sVals[4]['pos'] ))) # finish
+            self.sWidgets[4]['returnhome'].clicked.connect(lambda : self._return_to_home(4)) # finish
+            self.sWidgets[4]['linkedstage'].currentIndexChanged.connect(lambda : self._set_stage_link( 4, self.sWidgets[4]['linkedstage'].currentIndex()))
 
             self.sWidgets[1]['si'].setEnabled(False)
             self.sWidgets[2]['si'].setEnabled(False)
             self.sWidgets[3]['si'].setEnabled(False)
+            self.sWidgets[4]['si'].setEnabled(False)
 
 
 
@@ -173,9 +180,22 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         quit = QtWidgets.QAction("Quit", self)
         quit.triggered.connect(self.close)
 
+    def _stageControllerInitialization(self, stagePort):
+        # swap out the following line for whichever class connects to the stage controller:
+        self.stageController = esp301_GPIB(stagePort)
+        # update how many stages are active:
+        self.activeStages = [1, 2, 3]#, 4]
+        for stage in range(1,5):
+            if stage not in self.activeStages:
+                self.sVals.pop(stage)
+                self._link_enable(stage, False)
+                self.sWidgets[stage]['sethome'].setEnabled(False)
+                self.sWidgets[stage]['linkedstage'].setEnabled(False)
+                print(self.sVals.keys())
+
     def _connectInstruments(self):
         try:
-            self.esp.close_connection()
+            self.stageController.close_connection()
             for key in self.lockins:
                 key1 = key
                 for key in self.mWidgets[key1]:
@@ -184,12 +204,17 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             time.sleep(1)
         except:
             print('new connections')
-        ESP_port = self.SP_ESPaddress.value()
-        self.esp = esp301_GPIB(ESP_port)
-        self.sVals[1]['pos'], self.sVals[2]['pos'], self.sVals[3]['pos'] = self.esp.positions()
+        stagePort = self.SP_ESPaddress.value()
+        self.SP_ESPaddress.setEnabled(False)
+        self._stageControllerInitialization(stagePort)
+        for key in self.sVals:
+            self.sVals[key]['pos'] = self.stageController.get_absolute_position(self.sWidgets[key]['si'].value())
+            self._update_stage_values(key, self.sVals[key]['pos'])
         self.lockins = {}
         if self.CB_connect1.isChecked():
             lockin1_port = self.SP_address1.value()
+            self.SP_address1.setEnabled(False)
+            self.CB_connect1.setEnabled(False)
             l1 = sr830(lockin1_port)
             l1.set_input_config(l1.get_input_config())
             l1.set_sensitivity(l1.get_sensitivity())
@@ -202,6 +227,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.mWidgets[1][key].setEnabled(False)
         if self.CB_connect2.isChecked():
             lockin2_port = self.SP_address2.value()
+            self.SP_address2.setEnabled(False)
+            self.CB_connect2.setEnabled(False)
             l2 = sr830(lockin2_port)
             l2.set_input_config(l2.get_input_config())
             l2.set_sensitivity(l2.get_sensitivity())
@@ -272,7 +299,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self._link_enable(index, False)
 
     def _link_enable(self, index, boo):
-        for widg in ['mn', 'sn', 'sp', 'mp', 'returnhome', 'stop', 'ss', 'si', 'linkeddir']:
+        for widg in ['mn', 'sn', 'sp', 'mp', 'returnhome', 'stop', 'ss', 'linkeddir', 'multiplier']:
             self.sWidgets[index][widg].setEnabled(boo)
 
     def _return_to_home(self, index):
@@ -282,8 +309,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         except Exception as e:
             self.sVals[index]['home'] = homeph
             print(e)
-        self.esp.move_to_position(index, self.sVals[index]['home'])
-        self.sWidgets[index]['psteps'].setText(str(0))
+        self.stageController.move_to_position(index, self.sVals[index]['home'])
         for child in self.sVals[index]['children']:
             homeph = self.sVals[child]['home']
             try:
@@ -291,14 +317,13 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             except Exception as e:
                 self.sVals[child]['home'] = homeph
                 print(e)
-            self.esp.move_to_position(child, self.sVals[child]['home'])
-            self.sWidgets[child]['psteps'].setText(str(0))
+            self.stageController.move_to_position(child, self.sVals[child]['home'])
 
         self.x = np.array([0])
         self.y = {}
         self.y[1] = np.array([0])
         self.y[2] = np.array([0])
-        while self.esp.moving():
+        while self.stageController.moving():
             time.sleep(.01)
         time.sleep(max(self.timeConstants))
         self.appendData()
@@ -309,11 +334,9 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def _move_stage_step(self, index, pn):
         if self.motionAllowed:
             step = pn*self.sWidgets[index]['ss'].value()*.001
-            self.esp.move_step(self.sWidgets[index]['si'].value(), step)
-            self.sWidgets[index]['psteps'].setText(str(int(self.sWidgets[index]['psteps'].text())+pn))
+            self.stageController.move_step(self.sWidgets[index]['si'].value(), step*self.sWidgets[index]['multiplier'].value())
             for child in self.sVals[index]['children']:
-                self.esp.move_step(self.sWidgets[child]['si'].value(), self.sVals[child]['linkeddir']*step)
-                self.sWidgets[child]['psteps'].setText(str(int(self.sWidgets[child]['psteps'].text())+self.sVals[child]['linkeddir']*pn))
+                self.stageController.move_step(self.sWidgets[child]['si'].value(), self.sVals[child]['linkeddir']*step*self.sWidgets[child]['multiplier'].value())
             if index == self.CB_xleading.currentIndex()+1:
                 self.addNext = True
             self.motionAllowed = False
@@ -322,10 +345,9 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
     def _update_stage_positions(self):
         try:
-            self.sVals[1]['pos'], self.sVals[2]['pos'], self.sVals[3]['pos'] = self.esp.positions()
-            self._update_stage_values(1, self.sVals[1]['pos'])
-            self._update_stage_values(2, self.sVals[2]['pos'])
-            self._update_stage_values(3, self.sVals[3]['pos'])
+            for key in self.sVals:
+                self.sVals[key]['pos'] = self.stageController.get_absolute_position(self.sWidgets[key]['si'].value())
+                self._update_stage_values(key, self.sVals[key]['pos'])
         except Exception as e:
             print(e)
 
@@ -397,7 +419,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def runtime_function(self):
         # check whether to append data:
         if self.instrumentsConnected:
-            if self.esp.moving() == False:
+            if self.stageController.moving() == False:
                 if self.stageJustMoved == True:
                     self.timeStageEnd = time.monotonic()
                     self.stageJustMoved = False
@@ -490,13 +512,19 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
     def _storeSettings(self):
         stageSets = {}
-        for i in range(1,4):
+        for i in range(1,5):
             stageSets[i] = {}
-            stageSets[i]['homeMem'] = self.sVals[i]['home']
+            if i in list(self.sVals.keys()):
+                stageSets[i]['homeMem'] = self.sVals[i]['home']
+                print('save '+str(i))
+            else:
+                stageSets[i]['homeMem'] = 0.00
+                print('hmmm '+str(i))
             stageSets[i]['home'] = self.sWidgets[i]['home'].text()
             stageSets[i]['linkeddir'] = self.sWidgets[i]['linkeddir'].currentIndex()
             stageSets[i]['ss'] = self.sWidgets[i]['ss'].value()
             stageSets[i]['si'] = self.sWidgets[i]['si'].value()
+            stageSets[i]['multiplier'] = self.sWidgets[i]['multiplier'].value()
         try:
             self.settings.setValue('stageSets', stageSets)
             self.settings.setValue('xlim0', self.SB_xlim0.value())
@@ -515,12 +543,13 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.SB_xlim0.setValue(float(self.settings.value('xlim0')))
             self.SB_xlim1.setValue(float(self.settings.value('xlim1')))
             stageSets = self.settings.value('stageSets')
-            for i in range(1,4):
+            for i in range(1,5):
                 self.sVals[i]['home'] = stageSets[i]['homeMem']
+                self.sWidgets[i]['home'].setText(format(stageSets[i]['homeMem'], '.4f'))
                 self.sWidgets[i]['linkeddir'].setCurrentIndex(stageSets[i]['linkeddir'])
                 self.sWidgets[i]['ss'].setValue(stageSets[i]['ss'])
                 self.sWidgets[i]['si'].setValue(stageSets[i]['si'])
-                self.sWidgets[i]['home'].setText(format(stageSets[i]['homeMem'], '.4f'))
+                self.sWidgets[i]['multiplier'].setValue(stageSets[i]['multiplier'])
             self.CB_xleading.setCurrentIndex(self.settings.value('xleading'))
             self.SP_address1.setValue(int(self.settings.value('address1')))
             self.SP_address2.setValue(int(self.settings.value('address2')))
@@ -532,6 +561,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
     def _openWindow(self, window):
         window.show()
+
+    def _openScans(self):
+        self.scanWindow.show()
+        self.scanWindow.onWindowOpen()
 
     def _threadWork(self, function, *onFinishFunctions):
         self.thread = QtCore.QThread(parent = self)
@@ -545,6 +578,47 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.thread.start()
         for finishFunction in onFinishFunctions:
             self.thread.finished.connect(finishFunction)
+
+    def scanStart(self):
+        # lock widgets, stop timer
+        for key1 in self.sWidgets.keys():
+            for key2 in self.sWidgets[key1].keys():
+                self.sWidgets[key1][key2].setEnabled(False)
+        for key1 in self.mWidgets.keys():
+            for key2 in self.mWidgets[key1].keys():
+                self.mWidgets[key1][key2].setEnabled(False)
+        self.PB_quickFFT.setEnabled(False)
+        self.CB_invert1.setEnabled(False)
+        self.CB_invert2.setEnabled(False)
+        self.CB_xleading.setEnabled(False)
+        self.PB_scans.setEnabled(False)
+        self.SB_xlim0.setEnabled(False)
+        self.SB_xlim1.setEnabled(False)
+        self._timer.stop()
+
+    def scanEnd(self):
+        # resume timer, unlock all widgets
+        self._timer.start()
+        for key1 in self.sWidgets.keys():
+            for key2 in self.sWidgets[key1].keys():
+                if key2 != 'si':
+                    self.sWidgets[key1][key2].setEnabled(True)
+        for key1 in self.mWidgets.keys():
+            for key2 in self.mWidgets[key1].keys():
+                
+                self.mWidgets[key1][key2].setEnabled(True)
+        for stage in range(1,5):
+            if stage not in self.activeStages:
+                self._link_enable(stage, False)
+                self.sWidgets[stage]['sethome'].setEnabled(False)
+                self.sWidgets[stage]['linkedstage'].setEnabled(False)
+        self.PB_quickFFT.setEnabled(True)
+        self.CB_invert1.setEnabled(True)
+        self.CB_invert2.setEnabled(True)
+        self.CB_xleading.setEnabled(True)
+        self.PB_scans.setEnabled(True)
+        self.SB_xlim0.setEnabled(True)
+        self.SB_xlim1.setEnabled(True)
 
 class quickFFTWindow(QtWidgets.QWidget):
     def __init__(self, parent):
@@ -698,3 +772,4 @@ class PulsesearchCanvas(FigureCanvas):
 
     def updateLastPoint(self, x0 = [], x1 = [], y0 = [], y1 = []):
         self._updateLastPoint(x0, x1, y0, y1)
+
