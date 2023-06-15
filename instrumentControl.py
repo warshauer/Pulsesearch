@@ -73,7 +73,67 @@ class esp301_GPIB():
         self.instrument.close()
 
 #To check port, run 'ls /dev/tty*' in terminal, find device's name
+class smc100_serial(serial.Serial):
+    # only works for single digits axis number (string concatenations).
+    def __init__(port=None, baudrate=57600, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, timeout=None, xonxoff=True):
+        super().__init__(baudrate, bytesize, parity, stopbits, timeout, xonxoff)
+  
 
+    def _configure_instrument(self, ser_port):
+        self.port = ser_port
+        self.open()
+        print('serial port is open ==', self.isOpen())
+
+    def write_command(self, cmd, param1 = '', param2 = ''):
+        self.write(str(param1) + cmd + str(param2) + '\r\n')
+            #self.instrument.write(str(param1) + ascii_cmd + ','.join(list(map(lambda x: str(x), param2))) )
+
+    def query_command(self, cmd, param1 = ''):
+        self.write(str(param1) + cmd + '?' + '\r\n')
+        return self.readline()
+        #return self.instrument.query(str(param1) + ascii_cmd + '?' + ','.join(list(map(lambda x: str(x), param2))) )
+
+    #Initializing functions
+    def move_to_position(self, axis_number, position):
+        self.write_command('PA', axis_number, position)
+
+    """def enable_axis_motor(self, axis_number):
+        self.write_command('MO', axis_number)"""
+
+    def set_home(self, axis_number, position):
+        self.write_command('SE', axis_number, position)
+        # see the user manual for the set point position and simutaneous move of all motors to the set point position
+
+    #Runtime functions
+    def check_if_moving(self, axis_number):
+        temp = self.query_command('TS', axis_number)
+        if temp[-2:] in ['32', '33', '34', '35']:
+            return '1'
+        else:
+            return '0'
+        #return self.query_command('MD', axis_number) #0 is motion not done, 1 is motion done
+
+    def move_step(self, axis_number, step_size):
+        self.write_command('PR', axis_number, step_size)
+
+    def get_absolute_position(self, axis_number):
+        temp = self.query_command('TP', axis_number)
+        return float(temp[3:])
+
+    # NEED TO BE CHANGED
+    def moving(self):
+        motion = self.query_command('MD', 0)
+        if motion == '1':
+            return False
+        else:
+            return True
+
+    def positions(self):
+        return tuple(eval('['+self.query_command('TP', 0)+']'))
+
+    def close_connection(self):
+        self.close()
+     
 class esp301_USB():
     def __init__(self, port_name, baud_rate, timeout = 1):
         self.port_name = port_name
