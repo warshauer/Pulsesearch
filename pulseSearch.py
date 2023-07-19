@@ -20,10 +20,10 @@ import appClasses as dd
 #import qt5_controller as qc
 from warsh_comms import smsClient
 #from flowControllerClasses import Flowmeter
-from instrumentControl import esp301_GPIB, sr830
+from instrumentControl import esp301_GPIB, sr830, CONEX, motionController
 import time
 from scipy.fft import fft, fftfreq
-from scanProg import DLscanWindow
+from scanProgV2 import DLscanWindow
 
 class pulsesearchWindow(QtWidgets.QMainWindow):
     def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
@@ -73,6 +73,14 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.invert = [1,1]
         self.CB_invert1.stateChanged.connect(lambda : self._invertChange(0, self.CB_invert1.isChecked()))
         self.CB_invert2.stateChanged.connect(lambda : self._invertChange(1, self.CB_invert2.isChecked()))
+
+        self.SB_TCcof.valueChanged.connect( lambda : self.adjustTCwait( 0, self.SB_TCcof.value() ) )
+        self.TCcof = 2.0
+        self.SB_TCadd.valueChanged.connect( lambda : self.adjustTCwait( 1, self.SB_TCadd.value() ) )
+        self.TCadd = 0.050
+        self.PB_ccMove.clicked.connect(self._conexMove)
+        self.PB_ccUpdate.clicked.connect(self._conexUpdate)
+
 
         if True:
             self.yVals = {1:[0,0,0,0,0,0,0,0,0,0], 2:[0,0,0,0,0,0,0,0,0,0]}
@@ -159,10 +167,11 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.SB_ylim02.valueChanged.connect( lambda : self.ylimit_change( 2, 0, self.SB_ylim02.value()) )
             self.SB_ylim12.valueChanged.connect( lambda : self.ylimit_change( 2, 1, self.SB_ylim12.value()) )
 
+        self.commandQueue = []
         self._sample_interval = 50
         self._timer = QtCore.QTimer()
         self._timer.setInterval(self._sample_interval) #msec
-        self._timer.timeout.connect(self.runtime_function)
+        self._timer.timeout.connect(self.runtime_functionV2)
         self._timer.start()
 
         #self.sVals[1]['pos'], self.sVals[2]['pos'], self.sVals[3]['pos'] = self.esp.positions()
@@ -182,9 +191,14 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
     def _stageControllerInitialization(self, stagePort):
         # swap out the following line for whichever class connects to the stage controller:
-        self.stageController = esp301_GPIB(stagePort)
+        self.esp301 = esp301_GPIB(stagePort)
+        self.conex = CONEX(port = 3)
         # update how many stages are active:
-        self.activeStages = [1, 2, 3]#, 4]
+        #self.activeStages = [1, 2, 3]#, 4]
+        self.xleading = 1
+        stages = {1:self.esp301, 2:self.esp301, 3:self.esp301}
+        self.stageController = motionController(self, stages)
+        self.activeStages = list(stages.keys())
         for stage in range(1,5):
             if stage not in self.activeStages:
                 self.sVals.pop(stage)
@@ -209,6 +223,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self._stageControllerInitialization(stagePort)
         for key in self.sVals:
             self.sVals[key]['pos'] = self.stageController.get_absolute_position(self.sWidgets[key]['si'].value())
+            print(key, self.sVals[key]['pos'])
             self._update_stage_values(key, self.sVals[key]['pos'])
         self.lockins = {}
         if self.CB_connect1.isChecked():
@@ -309,7 +324,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         except Exception as e:
             self.sVals[index]['home'] = homeph
             print(e)
-        self.stageController.move_to_position(index, self.sVals[index]['home'])
+        self.stageController.move_absolute(index, self.sVals[index]['home'])
         for child in self.sVals[index]['children']:
             homeph = self.sVals[child]['home']
             try:
@@ -317,7 +332,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             except Exception as e:
                 self.sVals[child]['home'] = homeph
                 print(e)
-            self.stageController.move_to_position(child, self.sVals[child]['home'])
+            self.stageController.move_absolute(child, self.sVals[child]['home'])
 
         self.x = np.array([0])
         self.y = {}
@@ -325,23 +340,27 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.y[2] = np.array([0])
         while self.stageController.moving():
             time.sleep(.01)
-        time.sleep(max(self.timeConstants))
-        self.appendData()
-        self.addNext = True
-        self.motionAllowed = False
+        time.sleep(1.6*max(self.timeConstants))
+        self._addFunctionToQueue(self._safetyCheckpoint, index)
+        self._addFunctionToQueue(self.appendData)
         self.stageJustMoved = True
 
+    def _moveStageStep(self, index, pn):
+        step = pn*self.sWidgets[index]['ss'].value()*.001
+        self.stageController.move_step(self.sWidgets[index]['si'].value(), step*self.sWidgets[index]['multiplier'].value())
+        for child in self.sVals[index]['children']:
+            self.stageController.move_step(self.sWidgets[child]['si'].value(), self.sVals[child]['linkeddir']*step*self.sWidgets[child]['multiplier'].value())
+        if index == self.CB_xleading.currentIndex()+1:
+            self._addFunctionToQueue(self._safetyCheckpoint, index)
+            self._addFunctionToQueue(self.appendData)
+        self.stageJustMoved = True
+
+
     def _move_stage_step(self, index, pn):
-        if self.motionAllowed:
-            step = pn*self.sWidgets[index]['ss'].value()*.001
-            self.stageController.move_step(self.sWidgets[index]['si'].value(), step*self.sWidgets[index]['multiplier'].value())
-            for child in self.sVals[index]['children']:
-                self.stageController.move_step(self.sWidgets[child]['si'].value(), self.sVals[child]['linkeddir']*step*self.sWidgets[child]['multiplier'].value())
-            if index == self.CB_xleading.currentIndex()+1:
-                self.addNext = True
-            self.motionAllowed = False
-            self.stageJustMoved = True
-            self.TCsafety = False
+        self._addFunctionToQueue(self._moveStageStep, index, pn)
+        if index == self.CB_xleading.currentIndex()+1:
+            self._addFunctionToQueue(self._safetyCheckpoint, index)
+            self._addFunctionToQueue(self.appendData)
 
     def _update_stage_positions(self):
         try:
@@ -365,13 +384,17 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.loot = time.monotonic()
         #self.x.append(self.sVals[self.CB_xleading.currentIndex()+1]['pos'] - self.sVals[self.CB_xleading.currentIndex()+1]['home'])
 
-    def _move_stage_continuous(self, index, pn):
+    def _moveStageContinuous(self, index, pn):
         self._move = True
         self._cmi = index
         self._cmpn = pn
-
-    def _stop_stage_continuous(self):
+    def _move_stage_continuous(self, index, pn):
+        self._addFunctionToQueue(self._moveStageContinuous, index, pn)
+        
+    def _stopStageContinuous(self):
         self._move = False
+    def _stop_stage_continuous(self):
+        self._addFunctionToQueue(self._stopStageContinuous)
 
     def _change_sample_interval(self, value):
         self._sample_interval = value
@@ -415,33 +438,52 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.plot.update_plot(x1LI/.15, x2LI/.15, y1LI, y2LI)
             self.workerFinished0 = True
 
-    # HERE IS THE RUNTIME
-    def runtime_function(self):
-        # check whether to append data:
+    def runtime_functionV2(self):
         if self.instrumentsConnected:
-            if self.stageController.moving() == False:
-                if self.stageJustMoved == True:
-                    self.timeStageEnd = time.monotonic()
-                    self.stageJustMoved = False
-                else:
-                    if time.monotonic() - self.timeStageEnd > 2.0*max(self.timeConstants):
-                        if self.addNext:
-                            self.appendData()
-                            self.addNext = False
-                        self.TCsafety = True
-                        self.motionAllowed = True
-            # get lockin readings
+            self._updateQueueLen()
+            self.executeQueue()
+            # execute queue
             self.refreshData()
             self._update_measurement_values()
             self._update_stage_positions()
-            if self._move:
-                self._move_stage_step(self._cmi, self._cmpn)
+            if self._move == True and len(self.commandQueue) < 1:
+                self._addFunctionToQueue(self._move_stage_step, self._cmi, self._cmpn)
             self._threadWork(self.plotUpdate)
-            if self.counter1 > 1000:
+            if self.counter1 > 250:
                 self.counter1 = 0
                 self._update_ref_freq()
             else:
                 self.counter1 += 1
+
+    def executeQueue(self):
+        if len(self.commandQueue) < 1:
+            pass
+        else:
+            funky = self.commandQueue.pop(0)
+            funky()
+
+    def _updateQueueLen(self):
+        self.LE_queue.setText(str(len(self.commandQueue)))
+
+    def _addFunctionToQueue(self, func, *args, **kwargs):
+        self.commandQueue.append(self._lambMill(func, *args, **kwargs))
+        print('add to queue: ', func)
+
+    def _safetyCheckpoint(self, stageKey):
+        if self.stageController.moving():
+            self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, stageKey))
+        else:
+            if self.stageJustMoved == True:
+                self.timeStageEnd = time.monotonic()
+                self.stageJustMoved = False
+                self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, stageKey))
+            elif time.monotonic() - self.timeStageEnd < (self.TCcof*max(self.timeConstants) + self.TCadd):
+                self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, stageKey))
+            else:
+                pass
+
+    def _lambMill(self, func, *args, **kwargs):
+        return lambda:func(*args, **kwargs)
 
     def _onPlotPlot(self, index, bool):
         self._onPlot_[index] = bool
@@ -487,6 +529,12 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         else:
             self.invert[index] = 1
         print(self.invert)
+
+    def adjustTCwait(self, index, value):
+        if index == 0:
+            self.TCcof = value
+        elif index == 1:
+            self.TCadd = value
 
     def closeEvent(self, event):
         self._stop_stage_continuous()
@@ -619,6 +667,13 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.PB_scans.setEnabled(True)
         self.SB_xlim0.setEnabled(True)
         self.SB_xlim1.setEnabled(True)
+
+    def _conexMove(self):
+        self._addFunctionToQueue(self.conex.move_absolute, position = float(self.SB_ccHome.value()))
+        #self.conex.move_absolute( position = float(self.SB_ccHome.value()) )
+
+    def _conexUpdate(self):
+        self.LE_ccPos.setText( format(self.conex.get_absolute_position(), '.4f') )
 
 class quickFFTWindow(QtWidgets.QWidget):
     def __init__(self, parent):
@@ -773,3 +828,21 @@ class PulsesearchCanvas(FigureCanvas):
     def updateLastPoint(self, x0 = [], x1 = [], y0 = [], y1 = []):
         self._updateLastPoint(x0, x1, y0, y1)
 
+class stageManager():
+    def __init__(self, parent):
+        self.parent = parent
+
+        self.stages = {}
+        self.stageValues = {}
+        self.sVals[stage] = {'home':0.00, 'pos':0, 'linked':False, 'linkedstage':0, 'linkeddir':1, 'children':[], 'stepsize':0, 'index':1, 'multiplier':1}
+
+    def addStage(self, ):
+        pass
+
+    def getStageValue(self, stage):
+        pass
+
+    def moveStageStep(self, stage, step):
+        self.motionController.move_step(stage, step*0.001*self.stageValues[stage]['multiplier'])
+        for child in self.stageValues[stage]['children']:
+            self.motionController.move_step(child, step*0.001*self.stageValues[child]['multiplier'])
