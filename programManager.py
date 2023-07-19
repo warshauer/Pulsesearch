@@ -13,10 +13,11 @@ def runApp():
 
     #lakeshoreControl = lsc.lakeshoreWindow()
     pulseSearch = ps.pulsesearchWindow(version = 'v1.2')
+    pulseSearch.show()
     # add other applications here, then drop into the next class as an arg
 
-    manWindow = managerWindow(pulseSearch)
-    manWindow.show()
+    #manWindow = managerWindow(pulseSearch)
+    #manWindow.show()
 
     sys.exit(app.exec_())
 

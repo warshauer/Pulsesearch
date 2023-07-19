@@ -6,19 +6,19 @@ import time
 class motionController():
     def __init__(self, parent, deviceDict):
         self.parent = parent
-        self.devices = deviceDict
+        self.stages = deviceDict
 
     def move_absolute(self, device, position):
-        self.devices[device].move_absolute(axis_number = device, position = position)
+        self.stages[device].move_absolute(axis_number = device, position = position)
 
-    def move_step(self, device, step_size):
-        self.devices[device].move_step(axis_number = device, step_size = step_size)
+    def move_step(self, stage_key, index, step_size):
+        self.stages[stage_key].move_step(axis_number = index, step_size = step_size)
 
-    def get_absolute_position(self, device):
-        return self.devices[device].get_absolute_position(axis_number = device)
+    def get_absolute_position(self, stage_key, index):
+        return self.stages[stage_key].get_absolute_position(axis_number = index)
 
-    def moving(self):
-        return self.devices[1].moving()
+    def moving(self, stage_key, index):
+        return self.stages[stage_key].moving(axis_number = index)
 
 
 class esp301_GPIB():
@@ -329,7 +329,7 @@ class CONEX():
     def move_step(self, step_size, **kwargs):
         self.write_command('1PR{0:.2f}'.format(step_size))
 
-    def moving(self):
+    def moving(self, **kwargs):
         if str(self.query_command('1TS')) == '000033':
             return False
         else:
