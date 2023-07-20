@@ -66,6 +66,12 @@
         </property>
         <item>
          <widget class="QDoubleSpinBox" name="SB_ylim11">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -106,6 +112,12 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="SB_ylim01">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -223,6 +235,12 @@
         </property>
         <item>
          <widget class="QDoubleSpinBox" name="SB_ylim12">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -243,6 +261,195 @@
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label_21">
+          <property name="text">
+           <string>speed0</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="LE_speedAvg0">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="LE_speedLast0">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_22">
+          <property name="text">
+           <string>speed1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="LE_speedAvg1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="LE_speedLast1">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_26">
+          <property name="text">
+           <string>speed2</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="LE_speedAvg2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="LE_speedLast2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer_5">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -257,6 +464,12 @@
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="SB_ylim02">
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -289,12 +502,17 @@
        <widget class="QLineEdit" name="LE_queue">
         <property name="maximumSize">
          <size>
-          <width>40</width>
+          <width>70</width>
           <height>16777215</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -1539,6 +1757,9 @@
                    <property name="text">
                     <string/>
                    </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -1759,6 +1980,186 @@
          <attribute name="title">
           <string>motion settings</string>
          </attribute>
+         <widget class="QWidget" name="gridLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>160</width>
+            <height>80</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_11">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_33">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>updateFreq (s):</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="SB_updateFreq0">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="minimum">
+              <number>-1</number>
+             </property>
+             <property name="maximum">
+              <number>60</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="gridLayoutWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>190</x>
+            <y>20</y>
+            <width>160</width>
+            <height>80</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_12">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_43">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>updateFreq (s):</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="SB_updateFreq1">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="minimum">
+              <number>-1</number>
+             </property>
+             <property name="maximum">
+              <number>60</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="gridLayoutWidget_3">
+          <property name="geometry">
+           <rect>
+            <x>360</x>
+            <y>20</y>
+            <width>160</width>
+            <height>80</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_15">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_44">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>updateFreq (s):</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="SB_updateFreq2">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="minimum">
+              <number>-1</number>
+             </property>
+             <property name="maximum">
+              <number>60</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="gridLayoutWidget_4">
+          <property name="geometry">
+           <rect>
+            <x>530</x>
+            <y>20</y>
+            <width>160</width>
+            <height>80</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_16">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_45">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>updateFreq (s):</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="SB_updateFreq3">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="minimum">
+              <number>-1</number>
+             </property>
+             <property name="maximum">
+              <number>60</number>
+             </property>
+             <property name="value">
+              <number>-1</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
@@ -1790,13 +2191,13 @@
            <number>1</number>
           </property>
           <property name="minimum">
-           <double>1.000000000000000</double>
+           <double>0.000000000000000</double>
           </property>
           <property name="maximum">
            <double>4.000000000000000</double>
           </property>
           <property name="value">
-           <double>2.000000000000000</double>
+           <double>1.000000000000000</double>
           </property>
          </widget>
          <widget class="QLabel" name="label_10">
@@ -1828,7 +2229,7 @@
            <double>10.000000000000000</double>
           </property>
           <property name="value">
-           <double>0.050000000000000</double>
+           <double>0.000000000000000</double>
           </property>
          </widget>
          <widget class="QLabel" name="label_18">
@@ -2505,7 +2906,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1">
             <property name="spacing">
              <number>2</number>
             </property>
@@ -2529,57 +2930,11 @@
                </font>
               </property>
               <property name="currentText">
-               <string>unlinked</string>
+               <string>None</string>
               </property>
               <item>
                <property name="text">
-                <string>unlinked</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>4</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="CB_linkeddir0">
-              <property name="minimumSize">
-               <size>
-                <width>42</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>42</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>+1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>-1</string>
+                <string>None</string>
                </property>
               </item>
              </widget>
@@ -3156,7 +3511,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1">
             <property name="spacing">
              <number>2</number>
             </property>
@@ -3181,53 +3536,7 @@
               </property>
               <item>
                <property name="text">
-                <string>unlinked</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>4</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="CB_linkeddir1">
-              <property name="minimumSize">
-               <size>
-                <width>42</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>42</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>+1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>-1</string>
+                <string>None</string>
                </property>
               </item>
              </widget>
@@ -3801,7 +4110,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="1,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="1">
             <property name="spacing">
              <number>2</number>
             </property>
@@ -3826,53 +4135,7 @@
               </property>
               <item>
                <property name="text">
-                <string>unlinked</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>4</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="CB_linkeddir2">
-              <property name="minimumSize">
-               <size>
-                <width>42</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>42</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>+1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>-1</string>
+                <string>None</string>
                </property>
               </item>
              </widget>
@@ -4446,7 +4709,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_43" stretch="1,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_43" stretch="1">
             <property name="spacing">
              <number>2</number>
             </property>
@@ -4471,53 +4734,7 @@
               </property>
               <item>
                <property name="text">
-                <string>unlinked</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>3</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="CB_linkeddir3">
-              <property name="minimumSize">
-               <size>
-                <width>42</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>42</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>+1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>-1</string>
+                <string>None</string>
                </property>
               </item>
              </widget>
