@@ -201,7 +201,6 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         # update how many stages are active:
         #self.activeStages = [1, 2, 3]#, 4]
         self.xLeadingStage = 'ESP1'
-        {'home':0.00, 'position':0, 'linkedstage':0, 'children':[], 'stepsize':0, 'index':1, 'multiplier':1, 'updatefrequency':0, 'updatetime':time.monotonic()}
         stages = {'ESP1':self.esp301, 'ESP2':self.esp301, 'ESP3':self.esp301, 'CONEX':self.conex}
         self.activeStages = list(stages.keys())
         self.stageBoss.assignMotionController(motionController(self, stages))
