@@ -116,9 +116,7 @@ class DLscanWindow(QtWidgets.QWidget):
 
     def onWindowOpen(self):
         self.lockins = self.parent.lockins
-        self.esp = self.parent.stageController
-        self.lockins = self.parent.lockins
-        self.esp = self.parent.stageController
+        self.esp = self.parent.esp301
         try:
             self.conex = self.parent.conex
         except:
@@ -364,7 +362,7 @@ class DLscanWindow(QtWidgets.QWidget):
                 self.timeStageEnd = time.monotonic()
                 self.stageJustMoved = False
             elif self.esp.moving() == False and self.stageJustMoved == False:
-                if time.monotonic() - self.timeStageEnd > 2.1*max(self.timeConstants):
+                if time.monotonic() - self.timeStageEnd > 1.6*max(self.timeConstants):
                     self.appendData()
                     self.updatePlot()
                     self.runNextCommand()

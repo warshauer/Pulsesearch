@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1226</width>
-    <height>925</height>
+    <height>947</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -140,9 +140,9 @@
        </layout>
       </item>
       <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,0,0,0,1,0">
         <property name="spacing">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="leftMargin">
          <number>0</number>
@@ -174,6 +174,54 @@
           </property>
           <property name="value">
            <double>-1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="CB_xUnits">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <item>
+           <property name="text">
+            <string>ps</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>um</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="CB_invert1">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>-x1</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="CB_invert2">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>-x2</string>
           </property>
          </widget>
         </item>
@@ -543,7 +591,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>250</height>
+          <height>200</height>
          </size>
         </property>
         <property name="font">
@@ -552,7 +600,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <property name="maximumSize">
@@ -582,6 +630,12 @@
           </property>
           <item>
            <widget class="QGroupBox" name="groupBox_5">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>200</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <pointsize>12</pointsize>
@@ -1182,6 +1236,12 @@
           </item>
           <item>
            <widget class="QGroupBox" name="groupBox_7">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>200</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <pointsize>12</pointsize>
@@ -1851,57 +1911,6 @@
                 </property>
                </spacer>
               </item>
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>X axis leading stage:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="CB_xleading">
-                <property name="currentIndex">
-                 <number>0</number>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Stage 1</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Stage 2</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Stage 3</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Stage 4</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="CB_invert1">
-                <property name="text">
-                 <string>-x1</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="CB_invert2">
-                <property name="text">
-                 <string>-x2</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
             <item>
@@ -1981,451 +1990,579 @@
           <string>motion settings</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_16">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_19">
-            <property name="spacing">
-             <number>4</number>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="title">
+             <string>Stage 1</string>
             </property>
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="RB_xAxis0">
-              <property name="text">
-               <string>Leading x-axis</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QGridLayout" name="gridLayout_11">
-              <item row="2" column="1">
-               <widget class="QComboBox" name="CB_units0">
-                <item>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="RB_xAxis0">
+               <property name="text">
+                <string>Leading x-axis</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_11">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>mm</string>
+                  <string>Units:</string>
                  </property>
-                </item>
-                <item>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="SB_si0">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>3</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="CB_units0">
+                 <item>
+                  <property name="text">
+                   <string>mm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ps</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>deg</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_33">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>ps</string>
+                  <string>updateFreq (s):</string>
                  </property>
-                </item>
-                <item>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="SB_updateFreq0">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>-1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>60</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>deg</string>
+                  <string>Index:</string>
                  </property>
-                </item>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QSpinBox" name="SB_si0">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>3</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QSpinBox" name="SB_updateFreq0">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="minimum">
-                 <number>-1</number>
-                </property>
-                <property name="maximum">
-                 <number>60</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_33">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>updateFreq (s):</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_4">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Index:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_8">
-                <property name="text">
-                 <string>Units:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="LE_pps0">
-                <property name="minimumSize">
-                 <size>
-                  <width>70</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>12</pointsize>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(255, 255, 255);</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Sunken</enum>
-                </property>
-                <property name="text">
-                 <string>0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QLabel" name="label_9">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>ps</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_20">
-            <property name="spacing">
-             <number>4</number>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="title">
+             <string>Stage 2</string>
             </property>
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="RB_xAxis1">
-              <property name="text">
-               <string>Leading x-axis</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QGridLayout" name="gridLayout_12">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_43">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>updateFreq (s):</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QSpinBox" name="SB_updateFreq1">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="minimum">
-                 <number>-1</number>
-                </property>
-                <property name="maximum">
-                 <number>60</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_16">
-                <property name="text">
-                 <string>Units:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QComboBox" name="CB_units1">
-                <item>
-                 <property name="text">
-                  <string>mm</string>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="RB_xAxis1">
+               <property name="text">
+                <string>Leading x-axis</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_12">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="SB_si1">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>ps</string>
+                 <property name="minimum">
+                  <number>1</number>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>deg</string>
+                 <property name="maximum">
+                  <number>3</number>
                  </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>2</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_12">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Index:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_16">
+                 <property name="text">
+                  <string>Units:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="CB_units1">
+                 <property name="insertPolicy">
+                  <enum>QComboBox::InsertAtTop</enum>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>mm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ps</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>deg</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_43">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>updateFreq (s):</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="SB_updateFreq1">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>-1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>60</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_21">
-            <property name="spacing">
-             <number>4</number>
+           <widget class="QGroupBox" name="groupBox_9">
+            <property name="title">
+             <string>Stage 3</string>
             </property>
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="RB_xAxis2">
-              <property name="text">
-               <string>Leading x-axis</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QGridLayout" name="gridLayout_15">
-              <item row="0" column="1">
-               <widget class="QSpinBox" name="SB_updateFreq2">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="minimum">
-                 <number>-1</number>
-                </property>
-                <property name="maximum">
-                 <number>60</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_44">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>updateFreq (s):</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_41">
-                <property name="text">
-                 <string>Units:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QComboBox" name="CB_units2">
-                <item>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="RB_xAxis2">
+               <property name="text">
+                <string>Leading x-axis</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_15">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="CB_units2">
+                 <item>
+                  <property name="text">
+                   <string>mm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ps</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>deg</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_41">
                  <property name="text">
-                  <string>mm</string>
+                  <string>Units:</string>
                  </property>
-                </item>
-                <item>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="SB_updateFreq2">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>-1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>60</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_44">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>ps</string>
+                  <string>updateFreq (s):</string>
                  </property>
-                </item>
-                <item>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_20">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>deg</string>
+                  <string>Index:</string>
                  </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="SB_si2">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>3</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>3</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_25">
-            <property name="spacing">
-             <number>4</number>
+           <widget class="QGroupBox" name="groupBox_10">
+            <property name="title">
+             <string>Stage 4</string>
             </property>
-            <property name="leftMargin">
-             <number>4</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="RB_xAxis3">
-              <property name="text">
-               <string>Leading x-axis</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QGridLayout" name="gridLayout_16">
-              <item row="0" column="1">
-               <widget class="QSpinBox" name="SB_updateFreq3">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="minimum">
-                 <number>-1</number>
-                </property>
-                <property name="maximum">
-                 <number>60</number>
-                </property>
-                <property name="value">
-                 <number>-1</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_45">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>updateFreq (s):</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_24">
-                <property name="text">
-                 <string>Units:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QComboBox" name="CB_units3">
-                <item>
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="RB_xAxis3">
+               <property name="text">
+                <string>Leading x-axis</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">buttonGroup</string>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_16">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="CB_units3">
+                 <item>
+                  <property name="text">
+                   <string>mm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ps</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>deg</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_24">
                  <property name="text">
-                  <string>mm</string>
+                  <string>Units:</string>
                  </property>
-                </item>
-                <item>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_45">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>ps</string>
+                  <string>updateFreq (s):</string>
                  </property>
-                </item>
-                <item>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="SB_updateFreq3">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>-1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>60</number>
+                 </property>
+                 <property name="value">
+                  <number>-1</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_37">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>deg</string>
+                  <string>Index:</string>
                  </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="SB_si3">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>4</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>4</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -2513,91 +2650,17 @@
            <string>TCadd (s)</string>
           </property>
          </widget>
-         <widget class="QDoubleSpinBox" name="SB_ccHome">
+         <widget class="QPushButton" name="PB_clearQueue">
           <property name="geometry">
            <rect>
-            <x>390</x>
-            <y>30</y>
-            <width>91</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="decimals">
-           <number>4</number>
-          </property>
-          <property name="minimum">
-           <double>-300.000000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>300.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>5.000000000000000</double>
-          </property>
-          <property name="value">
-           <double>145.000000000000000</double>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="PB_ccMove">
-          <property name="geometry">
-           <rect>
-            <x>490</x>
-            <y>30</y>
-            <width>75</width>
-            <height>23</height>
+            <x>60</x>
+            <y>80</y>
+            <width>101</width>
+            <height>31</height>
            </rect>
           </property>
           <property name="text">
-           <string>Move</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="LE_ccPos">
-          <property name="geometry">
-           <rect>
-            <x>390</x>
-            <y>60</y>
-            <width>91</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>70</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
-          </property>
-          <property name="text">
-           <string>145.0000</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="PB_ccUpdate">
-          <property name="geometry">
-           <rect>
-            <x>490</x>
-            <y>60</y>
-            <width>75</width>
-            <height>23</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Update</string>
+           <string>Clear Queue</string>
           </property>
          </widget>
         </widget>
@@ -2622,13 +2685,13 @@
    <property name="minimumSize">
     <size>
      <width>314</width>
-     <height>224</height>
+     <height>187</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>314</width>
-     <height>224</height>
+     <height>187</height>
     </size>
    </property>
    <property name="font">
@@ -2815,7 +2878,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -2952,152 +3015,144 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
-         <property name="spacing">
-          <number>2</number>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
+         <property name="title">
+          <string>Positions</string>
          </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>4</number>
-         </property>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_17" columnstretch="1,0,0">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <property name="horizontalSpacing">
-            <number>2</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>0</number>
-           </property>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="PB_sethome0">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>SH</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="LE_home0">
-             <property name="inputMethodHints">
-              <set>Qt::ImhFormattedNumbersOnly</set>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="placeholderText">
-              <string>0.00</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Home:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,0,0">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <property name="horizontalSpacing">
-            <number>2</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>0</number>
-           </property>
-           <item row="0" column="2">
-            <widget class="QLabel" name="L_units0">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>mm</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="LE_pmm0">
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::Box</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-             <property name="text">
-              <string>0</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_47">
-             <property name="text">
-              <string>Position:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
+           <number>1</number>
+          </property>
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_47">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Current:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Home:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="LE_pmm0">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="LE_home0">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhFormattedNumbersOnly</set>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="placeholderText">
+             <string>0.00</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="PB_sethome0">
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>SH</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="L_units0">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </item>
@@ -3108,7 +3163,7 @@
    <property name="maximumSize">
     <size>
      <width>314</width>
-     <height>224</height>
+     <height>187</height>
     </size>
    </property>
    <property name="font">
@@ -3295,7 +3350,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -3312,10 +3367,7 @@
         <number>1</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_11">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+        <layout class="QGridLayout" name="gridLayout_5" columnstretch="0,0">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -3328,228 +3380,123 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="0,1,0">
-           <property name="spacing">
-            <number>2</number>
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="SB_multiplier1">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="leftMargin">
-            <number>2</number>
+           <property name="decimals">
+            <number>1</number>
            </property>
-           <property name="topMargin">
-            <number>2</number>
+           <property name="minimum">
+            <double>-10.000000000000000</double>
            </property>
-           <property name="rightMargin">
-            <number>2</number>
+           <property name="maximum">
+            <double>10.000000000000000</double>
            </property>
-           <property name="bottomMargin">
-            <number>2</number>
+           <property name="value">
+            <double>1.000000000000000</double>
            </property>
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Home:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="LE_home1">
-             <property name="inputMethodHints">
-              <set>Qt::ImhFormattedNumbersOnly</set>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="placeholderText">
-              <string>0.00</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="PB_sethome1">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>SH</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_5" columnstretch="0,0">
-           <property name="leftMargin">
-            <number>0</number>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="topMargin">
-            <number>0</number>
+           <property name="text">
+            <string>Step (um):</string>
            </property>
-           <property name="rightMargin">
-            <number>0</number>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
-           <property name="bottomMargin">
-            <number>0</number>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="spacing">
-            <number>2</number>
+           <property name="text">
+            <string>Multiplier:</string>
            </property>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="SB_si1">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>3</number>
-             </property>
-             <property name="singleStep">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>2</number>
-             </property>
-            </widget>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="SB_ss1">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <double>999.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>3.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_50">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Link:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="CB_linkedstage1">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Step (um):</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_12">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Index:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="SB_ss1">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="prefix">
-              <string/>
-             </property>
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <double>999.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>3.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_24">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-            </layout>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="SB_multiplier1">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-10.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>1.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_15">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Multiplier:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="minimumSize">
-          <size>
-           <width>132</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>132</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="QGroupBox" name="groupBox_6">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="title">
-          <string>positions</string>
+          <string>Positions</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_14">
-          <property name="spacing">
-           <number>2</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_18">
           <property name="leftMargin">
            <number>1</number>
           </property>
@@ -3562,141 +3509,119 @@
           <property name="bottomMargin">
            <number>1</number>
           </property>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_6" columnstretch="1,0">
-            <property name="leftMargin">
-             <number>4</number>
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_52">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="topMargin">
-             <number>4</number>
+            <property name="text">
+             <string>Current:</string>
             </property>
-            <property name="rightMargin">
-             <number>4</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item row="0" column="1">
-             <widget class="QLabel" name="L_units1">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>mm</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="LE_pmm1">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="LE_pps1">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_17">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>ps</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1">
-            <property name="spacing">
-             <number>2</number>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_17">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="leftMargin">
-             <number>2</number>
+            <property name="text">
+             <string>Home:</string>
             </property>
-            <property name="topMargin">
-             <number>2</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="rightMargin">
-             <number>2</number>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="LE_pmm1">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
             </property>
-            <property name="bottomMargin">
-             <number>2</number>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <item>
-             <widget class="QComboBox" name="CB_linkedstage1">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>None</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="LE_home1">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhFormattedNumbersOnly</set>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="placeholderText">
+             <string>0.00</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="PB_sethome1">
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>SH</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="L_units1">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -3710,7 +3635,7 @@
    <property name="maximumSize">
     <size>
      <width>314</width>
-     <height>224</height>
+     <height>187</height>
     </size>
    </property>
    <property name="font">
@@ -3897,7 +3822,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_14">
+      <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -3914,10 +3839,7 @@
         <number>1</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_12">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+        <layout class="QGridLayout" name="gridLayout_7" columnstretch="0,0">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -3930,225 +3852,120 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_30" stretch="0,1,0">
-           <property name="spacing">
-            <number>2</number>
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="SB_ss2">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="leftMargin">
-            <number>2</number>
+           <property name="decimals">
+            <number>1</number>
            </property>
-           <property name="topMargin">
-            <number>2</number>
+           <property name="maximum">
+            <double>999.000000000000000</double>
            </property>
-           <property name="rightMargin">
-            <number>2</number>
+           <property name="value">
+            <double>200.000000000000000</double>
            </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Home:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="LE_home2">
-             <property name="inputMethodHints">
-              <set>Qt::ImhFormattedNumbersOnly</set>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="placeholderText">
-              <string>0.00</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="PB_sethome2">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>SH</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_7" columnstretch="0,0">
-           <property name="leftMargin">
-            <number>0</number>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_19">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="topMargin">
-            <number>0</number>
+           <property name="text">
+            <string>Step (um):</string>
            </property>
-           <property name="rightMargin">
-            <number>0</number>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
-           <property name="bottomMargin">
-            <number>0</number>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="SB_multiplier2">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="spacing">
-            <number>2</number>
+           <property name="decimals">
+            <number>1</number>
            </property>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="SB_si2">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>3</number>
-             </property>
-             <property name="singleStep">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>3</number>
-             </property>
-            </widget>
+           <property name="minimum">
+            <double>-10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Multiplier:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="CB_linkedstage2">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_19">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Step (um):</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="SB_ss2">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <double>999.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>200.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_20">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Index:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_25">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-            </layout>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="SB_multiplier2">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-10.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>1.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Multiplier:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_51">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Link:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="minimumSize">
-          <size>
-           <width>132</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>132</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="QGroupBox" name="groupBox_8">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="title">
-          <string>positions</string>
+          <string>Positions</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_16">
-          <property name="spacing">
-           <number>2</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_19">
           <property name="leftMargin">
            <number>1</number>
           </property>
@@ -4161,141 +3978,119 @@
           <property name="bottomMargin">
            <number>1</number>
           </property>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_8" columnstretch="1,0">
-            <property name="leftMargin">
-             <number>4</number>
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_53">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="topMargin">
-             <number>4</number>
+            <property name="text">
+             <string>Current:</string>
             </property>
-            <property name="rightMargin">
-             <number>4</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item row="1" column="0">
-             <widget class="QLabel" name="LE_pps2">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="L_units2">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>mm</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="LE_pmm2">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_25">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>ps</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="1">
-            <property name="spacing">
-             <number>2</number>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_23">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="leftMargin">
-             <number>2</number>
+            <property name="text">
+             <string>Home:</string>
             </property>
-            <property name="topMargin">
-             <number>2</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="rightMargin">
-             <number>2</number>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="LE_pmm2">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
             </property>
-            <property name="bottomMargin">
-             <number>2</number>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <item>
-             <widget class="QComboBox" name="CB_linkedstage2">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>None</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="LE_home2">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhFormattedNumbersOnly</set>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="placeholderText">
+             <string>0.00</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="PB_sethome2">
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>SH</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="L_units2">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>mm</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -4309,7 +4104,7 @@
    <property name="maximumSize">
     <size>
      <width>314</width>
-     <height>224</height>
+     <height>187</height>
     </size>
    </property>
    <property name="font">
@@ -4496,7 +4291,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_40">
+      <layout class="QHBoxLayout" name="horizontalLayout_40" stretch="0,1">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -4513,10 +4308,7 @@
         <number>1</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_22">
-         <property name="spacing">
-          <number>0</number>
-         </property>
+        <layout class="QGridLayout" name="gridLayout_13" columnstretch="0,0">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -4529,225 +4321,120 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_41" stretch="0,1,0">
-           <property name="spacing">
-            <number>2</number>
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_34">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="leftMargin">
-            <number>2</number>
+           <property name="text">
+            <string>Step (deg):</string>
            </property>
-           <property name="topMargin">
-            <number>2</number>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_23">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Home:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="LE_home3">
-             <property name="inputMethodHints">
-              <set>Qt::ImhFormattedNumbersOnly</set>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="placeholderText">
-              <string>0.00</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="PB_sethome3">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>SH</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_13" columnstretch="0,0">
-           <property name="leftMargin">
-            <number>0</number>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="SB_ss3">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <property name="topMargin">
-            <number>0</number>
+           <property name="decimals">
+            <number>1</number>
            </property>
-           <property name="rightMargin">
-            <number>0</number>
+           <property name="maximum">
+            <double>999.000000000000000</double>
            </property>
-           <property name="bottomMargin">
-            <number>0</number>
+           <property name="value">
+            <double>200.000000000000000</double>
            </property>
-           <property name="spacing">
-            <number>2</number>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="SB_multiplier3">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="SB_si3">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>4</number>
-             </property>
-             <property name="singleStep">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>4</number>
-             </property>
-            </widget>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="minimum">
+            <double>-10.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_38">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Multiplier:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="CB_linkedstage3">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_34">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Step (um):</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="SB_ss3">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <double>999.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>200.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_37">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Index:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_42">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-            </layout>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="SB_multiplier3">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-10.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>10.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>1.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_38">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Multiplier:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_49">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Link:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="minimumSize">
-          <size>
-           <width>132</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>132</width>
-           <height>16777215</height>
-          </size>
-         </property>
+        <widget class="QGroupBox" name="groupBox_4">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="title">
-          <string>positions</string>
+          <string>Positions</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_23">
-          <property name="spacing">
-           <number>2</number>
-          </property>
+         <layout class="QGridLayout" name="gridLayout_17">
           <property name="leftMargin">
            <number>1</number>
           </property>
@@ -4760,141 +4447,119 @@
           <property name="bottomMargin">
            <number>1</number>
           </property>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_14" columnstretch="1,0">
-            <property name="leftMargin">
-             <number>4</number>
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_48">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="topMargin">
-             <number>4</number>
+            <property name="text">
+             <string>Current:</string>
             </property>
-            <property name="rightMargin">
-             <number>4</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="bottomMargin">
-             <number>4</number>
-            </property>
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item row="1" column="0">
-             <widget class="QLabel" name="LE_pps3">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="L_units3">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>mm</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="LE_pmm3">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_42">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>ps</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_43" stretch="1">
-            <property name="spacing">
-             <number>2</number>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="leftMargin">
-             <number>2</number>
+            <property name="text">
+             <string>Home:</string>
             </property>
-            <property name="topMargin">
-             <number>2</number>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="rightMargin">
-             <number>2</number>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="LE_pmm3">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
             </property>
-            <property name="bottomMargin">
-             <number>2</number>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <item>
-             <widget class="QComboBox" name="CB_linkedstage3">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>None</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="LE_home3">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhFormattedNumbersOnly</set>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="placeholderText">
+             <string>0.00</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="PB_sethome3">
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>SH</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="L_units3">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>deg</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -4907,4 +4572,7 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
