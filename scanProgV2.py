@@ -423,9 +423,9 @@ class DLscanWindow(QtWidgets.QWidget):
         self.commands.append([self.lambdaFactory(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2])])
         #self.commands.append([lambda:self.hippo.startFile(subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2])])
         self.commands.append([self.lambdaFactory(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2])])
-        self.commands.append([self.appendData])
+        #self.commands.append([self.appendData])
         self.commands.append([self.beginScan])
-        for j in range(numSteps):
+        for j in range(1,numSteps):
             moveCommand = []
             for i in range(len(movingIndices)):
                 #moveCommand.append(lambda:self._moveStep(movingIndices[i], movingStepsizes[i]*.001))

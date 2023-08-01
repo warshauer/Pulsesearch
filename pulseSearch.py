@@ -119,7 +119,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.CB_invert2.stateChanged.connect(lambda : self._invertChange(1, self.CB_invert2.isChecked()))
 
             self.SB_TCcof.valueChanged.connect( lambda : self.adjustTCwait( 0, self.SB_TCcof.value() ) )
-            self.TCcof = 1.0
+            self.TCcof = 1.6
             self.SB_TCadd.valueChanged.connect( lambda : self.adjustTCwait( 1, self.SB_TCadd.value() ) )
             self.TCadd = 0.00
             self.SB_xlim0.valueChanged.connect( lambda : self.xlimit_change( 0, self.SB_xlim0.value() ) )
@@ -169,6 +169,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         for key in stages:
             if key in list(self.stageValueInit.keys()):
                 self.stageBoss.addStage(key, self.stageValueInit[key].copy())
+                self.stageBoss.clearChildren(key)
             else:
                 print('no stage recall')
                 self.stageBoss.addStage(key, {'home':0.00, 'position':0.0, 'link':None, 'children':[], 'stepsize':5, 'index':1, 'multiplier':1, 'updatefrequency':-1, 
@@ -459,6 +460,15 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
             else:
                 pass
+    
+    def _safetyCheckpointMEGA(self, *stage_keys):
+        while True in [self.stageBoss.moving(stage_key) for stage_key in stage_keys]:
+            time.sleep(0.2)
+        if self.stageJustMoved == True:
+            self.timeStageEnd = time.monotonic()
+            self.stageJustMoved = False
+        while time.monotonic() - self.timeStageEnd < (self.TCcof*max(self.timeConstants) + self.TCadd):
+            time.sleep(0.2)
 
     def _lambMill(self, func, *args, **kwargs):
         return lambda:func(*args, **kwargs)
@@ -881,18 +891,20 @@ class stageBoss():
     def linkStage(self, stage_key, link_key):
         if self.stageValues[stage_key]['link'] == None:
             self.stageValues[stage_key]['link'] = link_key
-            if stage_key not in self.stageValues[link_key]['children']:
+            if stage_key not in self.stageValues[link_key]['children'] and stage_key != link_key:
                 self.stageValues[link_key]['children'].append(stage_key)
         else:
             self.unlinkStage(stage_key)
             self.stageValues[stage_key]['link'] = link_key
-            if stage_key not in self.stageValues[link_key]['children']:
+            if stage_key not in self.stageValues[link_key]['children'] and stage_key != link_key:
                 self.stageValues[link_key]['children'].append(stage_key)
     def unlinkStage(self, stage_key):
         self.stageValues[self.stageValues[stage_key]['link']]['children'].remove(stage_key)
         self.stageValues[stage_key]['link'] = None
     def getChildren(self, stage_key):
         return self.stageValues[stage_key]['children']
+    def clearChildren(self, stage_key):
+        self.stageValues[stage_key]['children'] = []
 
     def updateStagePositions(self):
         for stage_key in self.stageValues:
@@ -918,8 +930,10 @@ class stageBoss():
 
     def moveStageStep(self, stage_key, pn):
         self.motionController.move_step(stage_key = stage_key, index = self.stageValues[stage_key]['index'], step_size = pn*self.stageValues[stage_key]['stepsize']*self.stageValues[stage_key]['multiplier'])
+        print('move ', stage_key)
         for child_key in self.stageValues[stage_key]['children']:
             self.motionController.move_step(stage_key = child_key, index = self.stageValues[child_key]['index'], step_size = pn*self.stageValues[stage_key]['stepsize']*self.stageValues[child_key]['multiplier'])
+            print('move ', child_key)
 
     def moveStageHome(self, stage_key):
         self.motionController.move_absolute(stage_key = stage_key, index = self.stageValues[stage_key]['index'], position = self.stageValues[stage_key]['home'])
@@ -945,6 +959,7 @@ class motionController():
         self.stages[stage_key].move_absolute(axis_number = index, position = position)
 
     def move_step(self, stage_key, index, step_size):
+        print(step_size*self.unitMultiplier[stage_key], stage_key)
         self.stages[stage_key].move_step(axis_number = index, step_size = step_size*self.unitMultiplier[stage_key])
 
     def get_absolute_position(self, stage_key, index):
