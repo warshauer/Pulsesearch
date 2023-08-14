@@ -78,7 +78,7 @@ class DLscanWindow(QtWidgets.QWidget):
             self.stageValues[2] = {'home':0.00, 'pos':0}
             self.stageValues[3] = {'home':0.00, 'pos':0}
 
-            self.sWidgets = {'THzsetposition':self.SB_THzPos, 'gatesetposition':self.SB_gatePos, 'THzposition':self.LE_THzCurrent, 'gateposition':self.LE_gateCurrent, 'prescan':self.SB_prescan, 'movetostart':self.PB_moveToStart, 'delays':self.TE_delays, 'start':self.PB_start, 'comments':self.TE_comments, 'extension':self.LE_extension, 'startnum':self.SB_startnum, 'filename':self.LE_filename, 'path':self.LE_path, 'browse':self.PB_browse, 'stop':self.PB_stop, 'stepsize':self.SB_stepSize, 'numsteps':self.SB_numSteps, 'THzindex':self.SB_THzIndex, 'gateindex':self.SB_gateIndex, 'scanperround':self.SB_scanPerRound, 'numrounds':self.SB_numRounds, 'round':self.LE_round, 'delay':self.LE_delay, 'scan':self.LE_scan, 'set2current':self.PB_set2current, 'scanmode':self.CB_scanMode}
+            self.sWidgets = {'THzsetposition':self.SB_THzPos, 'gatesetposition':self.SB_gatePos, 'THzposition':self.LE_THzCurrent, 'gateposition':self.LE_gateCurrent, 'prescan':self.SB_prescan, 'movetostart':self.PB_moveToStart, 'delays':self.TE_delays, 'start':self.PB_start, 'comments':self.TE_comments, 'extension':self.LE_extension, 'startnum':self.SB_startnum, 'filename':self.LE_filename, 'path':self.LE_path, 'browse':self.PB_browse, 'stop':self.PB_stop, 'stepsize':self.SB_stepSize, 'numsteps':self.SB_numSteps, 'THzkey':self.LE_THzKey, 'gatekey':self.LE_gateKey, 'rotkey':self.LE_rotKey, 'scanperround':self.SB_scanPerRound, 'numrounds':self.SB_numRounds, 'round':self.LE_round, 'delay':self.LE_delay, 'scan':self.LE_scan, 'set2current':self.PB_set2current, 'scanmode':self.CB_scanMode}
 
 
             # why didn't this work in a for loop :(
@@ -116,7 +116,7 @@ class DLscanWindow(QtWidgets.QWidget):
 
     def onWindowOpen(self):
         self.lockins = self.parent.lockins
-        self.esp = self.parent.esp301
+        self.stageBoss = self.parent.stageBoss
         try:
             self.conex = self.parent.conex
         except:
@@ -137,28 +137,15 @@ class DLscanWindow(QtWidgets.QWidget):
         self.ylimit_change( self.plot, 0, -self._sensitivityList[value], axis = index )
         self.ylimit_change( self.plot, 1, self._sensitivityList[value], axis = index )
         # change y limits
-    
 
-    def _moveToStartPositions(self, delay = 0.0):
-        self._determineScanMode()
-        self.THzStart = self.sWidgets['THzsetposition'].value() - self.pn*self.sWidgets['prescan'].value() - delay*.15
-        self.esp.move_absolute(self.sWidgets['THzindex'].value(), self.THzStart)
-        while self.esp.moving():
-            time.sleep(.1)
-        self.esp.move_absolute(self.sWidgets['gateindex'].value(), self.sWidgets['gatesetposition'].value() - self.pn*self.link*self.sWidgets['prescan'].value() - delay*.15)
-        while self.esp.moving():
-            time.sleep(.1)
-        time.sleep(2.0)
-        self.motionAllowed = False
-        self.stageJustMoved = True
+    def _setStepsize(self, stage_key, step_size):
+        self.stageBoss.setStepsize()
 
-    def _moveStep(self, index, step_size):
-        self.esp.move_step(index, step_size)
-        self.stageJustMoved = True
+    def _moveStep(self, stage_key, step_size):
+        self.stageBoss.moveStageStep(stage_key, step_size)
 
-    def _moveAbsolute(self, index, pos):
-        self.esp.move_absolute(index, pos)
-        self.stageJustMoved = True
+    def _moveAbsolute(self, stage_key, pos):
+        self.stageBoss.moveStageAbsolute(stage_key, pos)
 
     def _update_stage_positions(self):
         for key in self.stageValues:
@@ -263,7 +250,7 @@ class DLscanWindow(QtWidgets.QWidget):
             self.rotPositions = self._parseRotationPositions()
             comments = self._buildComments()
             self.hippo = HungryHungryHippo(self, self.delays, self.numScans, self.sWidgets['numrounds'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['path'].text(), self.sWidgets['filename'].text(), self.sWidgets['extension'].text(), self.sWidgets['startnum'].value(), comments)
-            self.scanList = self.buildScans(self.sWidgets['THzsetposition'].value(), self.sWidgets['THzindex'].value(), self.sWidgets['gatesetposition'].value(), self.sWidgets['gateindex'].value(), self.delays, self.numScans, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), self.SB_rotIndex.value(), self.rotPositions)
+            self.scanList = self.buildScans(self.sWidgets['THzsetposition'].value(), str(self.sWidgets['THzkey'].text()), self.sWidgets['gatesetposition'].value(), str(self.sWidgets['gatekey'].text()), self.delays, self.numScans, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), str(self.sWidgets['rotkey'].text()), self.rotPositions)
             print('scanList created')
             self.xlimit_change(self.plot, 0, 0)
             self.xlimit_change(self.plot, 1, self.sWidgets['numsteps'].value()*self.sWidgets['stepsize'].value()/.15/1000)
@@ -353,8 +340,6 @@ class DLscanWindow(QtWidgets.QWidget):
     def updatePlot2(self):
         self.plot.update_plot(np.array(self.x), self.y)
 
-
-    # HERE IS THE RUNTIME
     def runtime_function(self):
         # check whether to append data:
         if self.started:
@@ -368,6 +353,43 @@ class DLscanWindow(QtWidgets.QWidget):
                     self.runNextCommand()
         self._update_stage_positions()
         self._update_stage_values()
+
+    # ---- MAIN RUNTIME ----
+    def runtime_functionV2(self):
+        if self.started:
+            self.executeQueue()
+            
+            #self.appendData()
+            #self.updatePlot()
+        self._update_stage_positions()
+        self._update_stage_values()
+
+    def executeQueue(self):
+        if len(self.commandQueue) < 1:
+            print('executeQueue() received empty set of functions')
+            time.sleep(20)
+        else:
+            funky = self.commandQueue.pop(0)
+            funky()
+
+    def _addFunctionToQueue(self, func, *args, **kwargs):
+        self.commandQueue.append(self._lambMill(func, *args, **kwargs))
+
+    def _safetyCheckpoint(self, *stage_keys):
+        if True in [self.stageBoss.moving(stage_key) for stage_key in stage_keys]:
+            self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
+        else:
+            if self.stageJustMoved == True:
+                self.timeStageEnd = time.monotonic()
+                self.stageJustMoved = False
+                self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
+            elif time.monotonic() - self.timeStageEnd < (self.TCcof*max(self.timeConstants) + self.TCadd):
+                self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
+            else:
+                pass
+
+    def _lambMill(self, func, *args, **kwargs):
+        return lambda:func(*args, **kwargs)
 
     def _update_scan_numbers(self, r, d, s):
         self.sWidgets['round'].setText(str(r))
@@ -384,17 +406,15 @@ class DLscanWindow(QtWidgets.QWidget):
             time.sleep(20)
             
 
-    def buildScans(self, THzStart, THzIndex, gateStart, gateIndex, delays, numScans, stepsize, numSteps, prescan, numRounds, rotIndex, rotPositions):
+    def buildScans(self, THzStart, THzKey, gateStart, gateKey, delays, numScans, stepsize, numSteps, prescan, numRounds, rotKey, rotPositions):
         scanList = []
         for i in range(numRounds):
             for rotPos in rotPositions:
-                bony = True
                 for j in range(len(delays)):
                     for k in range(numScans[j]):
-                        THzKerby = {'index':THzIndex, 'start':THzStart - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'controller':'ESP', 'subdir':False, 'bonusCom':True}
-                        gateKerby = {'index':gateIndex, 'start':gateStart - delays[j]*0.15, 'moving':False, 'stepsize':0, 'controller':'ESP', 'subdir':False, 'bonusCom':True}
-                        rotKerby = {'index':rotIndex, 'start':rotPos, 'moving':False, 'stepsize':0, 'controller':'CONEX', 'subdir':True, 'bonusCom':bony}
-                        bony = False
+                        THzKerby = {'stage_key':THzKey, 'start':THzStart - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
+                        gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False}
+                        rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
                         print(i,j,k)
                         scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k]} )
         return scanList
@@ -402,37 +422,32 @@ class DLscanWindow(QtWidgets.QWidget):
     def initializeScan(self, *args, numSteps = 3, RDS = None):
         # arg = {'index':stageIndex, 'start':startPosition, 'moving':True/False, 'stepsize':stepSize, 'controller':theControllerName}
         print('initialize ['+','.join([str(x) for x in RDS])+']')
-        movingIndices = []
+        self.commandQueue = []
+        movingKeys = []
         movingStepsizes = []
         startCommands = []
         subdir = ''
         for arg in args:
             print(arg)
-            index = arg['index']
+            stage_key = arg['stage_key']
             start = arg['start']
-            controller = arg['controller']
-            bonusCom = arg['bonusCom']
-            #startCommands.append(lambda:self._moveControllerAbsolute(index, start, controller))
-            if bonusCom:
-                startCommands.append(self.lambdaFactory(self._moveControllerAbsolute, index = index, start = start, controller = controller))
+            startCommands.append(self.lambMill(self._moveStageAbsolute, stage_key = stage_key, start = start))
+            startCommands.append(self.lambMill(self._safetyCheckpoint, stage_key = stage_key))
+            startCommands.append(self.lambMill(self._update_stage_value, stage_key = stage_key))
             if arg['moving']:
-                movingIndices.append(index)
-                movingStepsizes.append(arg['stepsize'])
+                movingKeys.append(stage_key)
+                movingStepsizes.append(arg['stepsize'])# instead of this we just have to set step size
                 self.THzStart = start
             if arg['subdir']:
                 subdir = '\\{0:.1f}'.format(start)
         self.commands = []
         self.commands.append(startCommands)
-        #self.commands.append([lambda:self._update_scan_numbers(r = RDS[0], d = RDS[1], s = RDS[2])])
         self.commands.append([self.lambdaFactory(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2])])
-        #self.commands.append([lambda:self.hippo.startFile(subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2])])
         self.commands.append([self.lambdaFactory(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2])])
-        #self.commands.append([self.appendData])
         self.commands.append([self.beginScan])
         for j in range(1,numSteps):
             moveCommand = []
-            for i in range(len(movingIndices)):
-                #moveCommand.append(lambda:self._moveStep(movingIndices[i], movingStepsizes[i]*.001))
+            for i in range(len(movingKeys)):
                 moveCommand.append(self.lambdaFactory(self._moveStep, index = movingIndices[i], step_size = movingStepsizes[i]*.001))
             self.commands.append(moveCommand)
         self.commands.append([self.stopScan])
@@ -440,15 +455,8 @@ class DLscanWindow(QtWidgets.QWidget):
     def lambdaFactory(self, func, **kwargs):
         return lambda:func(**kwargs)
 
-    def _moveControllerAbsolute(self, index, start, controller):
-        if controller == 'ESP':
-            self._moveAbsolute(index, start)
-        elif controller == 'CONEX':
-            self.conex.move_absolute(start)
-            while self.conex.moving():
-                time.sleep(0.1)
-            time.sleep(0.5)
-            self._update_conex_value()
+    def _moveStageAbsolute(self, stage_key, start):
+        self.stageBoss.moveStageAbsolute(stage_key, start)
 
     def _update_stage_values(self):
         if self.sWidgets['THzposition'] != format(self.stageValues[self.sWidgets['THzindex'].value()]['pos'], '.4f'):

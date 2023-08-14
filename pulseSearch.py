@@ -31,7 +31,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.ui = uic.loadUi('pulsesearchv2.ui',self) # swap this to pyui5 instead, then we may export it out to a class to make generic, contain and sort widgets and variables
         self.resize(1700, 1000)
         self.me = whoami
-        self.stageBoss = stageBoss(self)
+        self.stageBoss = stageBoss()
 
         self.instrumentsConnected = False
 
@@ -131,6 +131,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
         self.commandQueue = []
         self.PB_clearQueue.clicked.connect(self._clearQueue)
+        self.PB_clearChildren.clicked.connect(self._clear_all_children)
 
         self._sample_interval = 50
         self._timer = QtCore.QTimer()
@@ -165,7 +166,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.xLeadingStage = 'ESP1'
         stages = {'ESP1':self.esp301, 'ESP2':self.esp301, 'ESP3':self.esp301, 'CONEX':self.conex}
         self.activeStages = list(stages.keys())
-        self.stageBoss.assignMotionController(motionController(self, stages, unitMultiplier = {'ESP1':0.001, 'ESP2':0.001, 'ESP3':0.001, 'CONEX':1}))
+        self.stageBoss.assignMotionController(motionController(stages, unitMultiplier = {'ESP1':0.001, 'ESP2':0.001, 'ESP3':0.001, 'CONEX':1}))
         for key in stages:
             if key in list(self.stageValueInit.keys()):
                 self.stageBoss.addStage(key, self.stageValueInit[key].copy())
@@ -306,6 +307,9 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def _link_enable(self, stage_key, boo):
         for widg in ['mn', 'sn', 'sp', 'mp', 'returnhome', 'stop', 'ss', 'si']:
             self.sWidgets[stage_key][widg].setEnabled(boo)
+    def _clear_all_children(self):
+        self.stageBoss.clearAllChildren()
+
 
     def _set_home(self, stage_key):
         try:
@@ -869,8 +873,7 @@ class PulsesearchCanvas(FigureCanvas):
         self._updateLastPoint(x0, x1, y0, y1)
 
 class stageBoss():
-    def __init__(self, parent):
-        self.parent = parent
+    def __init__(self):
         self.stages = {}
         self.stageValues = {}
         
@@ -893,11 +896,13 @@ class stageBoss():
             self.stageValues[stage_key]['link'] = link_key
             if stage_key not in self.stageValues[link_key]['children'] and stage_key != link_key:
                 self.stageValues[link_key]['children'].append(stage_key)
+                print(self.stageValues[link_key]['children'])
         else:
             self.unlinkStage(stage_key)
             self.stageValues[stage_key]['link'] = link_key
             if stage_key not in self.stageValues[link_key]['children'] and stage_key != link_key:
                 self.stageValues[link_key]['children'].append(stage_key)
+                print(self.stageValues[link_key]['children'])
     def unlinkStage(self, stage_key):
         self.stageValues[self.stageValues[stage_key]['link']]['children'].remove(stage_key)
         self.stageValues[stage_key]['link'] = None
@@ -905,6 +910,10 @@ class stageBoss():
         return self.stageValues[stage_key]['children']
     def clearChildren(self, stage_key):
         self.stageValues[stage_key]['children'] = []
+    def clearAllChildren(self):
+        for key in self.stageValues:
+            print(self.stageValues[key]['children'])
+            self.stageValues[key]['children'] = []
 
     def updateStagePositions(self):
         for stage_key in self.stageValues:
@@ -940,6 +949,9 @@ class stageBoss():
         for child_key in self.stageValues[stage_key]['children']:
             self.motionController.move_absolute(stage_key = child_key, index = self.stageValues[child_key]['index'], position = self.stageValues[child_key]['home'])
 
+    def moveStageAbsolute(self, stage_key, position):
+        self.motionController.move_absolute(stage_key = stage_key, index = self.stageValues[stage_key]['index'], position = position)
+
     def moving(self, stage_key):
         self.motionController.moving(stage_key = stage_key, index = self.stageValues[stage_key]['index'])
 
@@ -950,8 +962,7 @@ class stageBoss():
         return self.stageValues[stage_key].copy()
 
 class motionController():
-    def __init__(self, parent, deviceDict, unitMultiplier):
-        self.parent = parent
+    def __init__(self, deviceDict, unitMultiplier):
         self.stages = deviceDict
         self.unitMultiplier = unitMultiplier
 
