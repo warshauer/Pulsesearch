@@ -434,6 +434,9 @@
              <property name="decimals">
               <number>1</number>
              </property>
+             <property name="minimum">
+              <double>-999.000000000000000</double>
+             </property>
              <property name="maximum">
               <double>999.000000000000000</double>
              </property>
@@ -647,6 +650,20 @@
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QComboBox" name="CB_scanType">
+             <item>
+              <property name="text">
+               <string>THz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>po</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>

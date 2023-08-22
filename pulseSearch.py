@@ -23,7 +23,7 @@ from warsh_comms import smsClient
 from instrumentControl import esp301_GPIB, sr830, CONEX
 import time
 from scipy.fft import fft, fftfreq
-from scanProgV2 import DLscanWindow
+from scanProgV3 import DLscanWindow
 
 class pulsesearchWindow(QtWidgets.QMainWindow):
     def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
@@ -904,7 +904,8 @@ class stageBoss():
                 self.stageValues[link_key]['children'].append(stage_key)
                 print(self.stageValues[link_key]['children'])
     def unlinkStage(self, stage_key):
-        self.stageValues[self.stageValues[stage_key]['link']]['children'].remove(stage_key)
+        while stage_key in self.stageValues[self.stageValues[stage_key]['link']]['children']:
+            self.stageValues[self.stageValues[stage_key]['link']]['children'].remove(stage_key)
         self.stageValues[stage_key]['link'] = None
     def getChildren(self, stage_key):
         return self.stageValues[stage_key]['children']
@@ -937,12 +938,10 @@ class stageBoss():
     def getHomePosition(self, stage_key):
         return self.stageValues[stage_key]['home']
 
-    def moveStageStep(self, stage_key, pn):
+    def moveStageStep(self, stage_key, pn = 1):
         self.motionController.move_step(stage_key = stage_key, index = self.stageValues[stage_key]['index'], step_size = pn*self.stageValues[stage_key]['stepsize']*self.stageValues[stage_key]['multiplier'])
-        print('move ', stage_key)
         for child_key in self.stageValues[stage_key]['children']:
             self.motionController.move_step(stage_key = child_key, index = self.stageValues[child_key]['index'], step_size = pn*self.stageValues[stage_key]['stepsize']*self.stageValues[child_key]['multiplier'])
-            print('move ', child_key)
 
     def moveStageHome(self, stage_key):
         self.motionController.move_absolute(stage_key = stage_key, index = self.stageValues[stage_key]['index'], position = self.stageValues[stage_key]['home'])
@@ -970,7 +969,6 @@ class motionController():
         self.stages[stage_key].move_absolute(axis_number = index, position = position)
 
     def move_step(self, stage_key, index, step_size):
-        print(step_size*self.unitMultiplier[stage_key], stage_key)
         self.stages[stage_key].move_step(axis_number = index, step_size = step_size*self.unitMultiplier[stage_key])
 
     def get_absolute_position(self, stage_key, index):
