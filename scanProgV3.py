@@ -12,7 +12,6 @@ from PyQt5 import uic
 from PyQt5.QtCore import pyqtSlot
 import appClasses as dd
 #import qt5_controller as qc
-from warsh_comms import smsClient
 #from flowControllerClasses import Flowmeter
 from instrumentControl import esp301_GPIB, sr830
 import time
@@ -141,10 +140,6 @@ class DLscanWindow(QtWidgets.QWidget):
         self.stageBoss.moveStageStep(stage_key)
         self.stageJustMoved = True
 
-    def _moveAbsolute(self, stage_key, pos):
-        self.stageBoss.moveStageAbsolute(stage_key, pos)
-        self.stageJustMoved = True
-
     def _update_stage_position(self, *stage_keys):
         for stage_key in stage_keys:
             self.stageBoss.updateStagePosition(stage_key)
@@ -172,7 +167,8 @@ class DLscanWindow(QtWidgets.QWidget):
         self._update_stage_position('ESP1', 'ESP2')
         x = self.pn*(self.stageBoss.getStagePosition('ESP1') - self.THzStart)/.15
         self.x.append(x)
-        self.hippo.feedData(x, y1, y2)
+        if self.logActive:
+            self.hippo.feedData(x, y1, y2)
         #print(time.monotonic() - self.loot)
         #self.loot = time.monotonic()
 
@@ -192,6 +188,7 @@ class DLscanWindow(QtWidgets.QWidget):
         # y axis based on sensitivity
         # wait times based on time constant
         try:
+            self.firstTime = True
             self._sensitivityChange(1, self.lockins[1].get_sensitivity())
             self.timeConstants[0] = self._timeConstantList[self.lockins[1].get_time_constant()]
             self._sensitivityChange(2, self.lockins[2].get_sensitivity())
@@ -210,7 +207,7 @@ class DLscanWindow(QtWidgets.QWidget):
             self.y[2]['live'] = []
             self._widgetEnable(False)
             scanDict = self.scanList.pop(0)
-            self.initializeScan(*scanDict['args'], numSteps = scanDict['numSteps'], RDS = scanDict['RDS'])
+            self.initializeScan(*scanDict['args'], numSteps = scanDict['numSteps'], RDS = scanDict['RDS'], scanType = scanDict['scanType'])
             print('after pull')
             self.started = False
             while self.started != True:
@@ -236,12 +233,15 @@ class DLscanWindow(QtWidgets.QWidget):
 
     def stopScan(self):
         self.started = False
-        self.hippo.closeFile()
+        print(self.x)
+        print(self.y[1]['live'])
+        if self.logActive:
+            self.hippo.closeFile()
         if len(self.scanList) < 1:
             self.stop()
         else:
             scanDict = self.scanList.pop(0)
-            self.initializeScan(*scanDict['args'], numSteps = scanDict['numSteps'], RDS = scanDict['RDS'])
+            self.initializeScan(*scanDict['args'], numSteps = scanDict['numSteps'], RDS = scanDict['RDS'], scanType = scanDict['scanType'])
             while self.started != True:
                 self.executeQueue()
 
@@ -309,15 +309,18 @@ class DLscanWindow(QtWidgets.QWidget):
     def _addFunctionToQueue(self, func, *args, **kwargs):
         self.commandQueue.append(self._lambMill(func, *args, **kwargs))
 
-    def _safetyCheckpoint(self, *stage_keys):
+    def _safetyCheckpoint(self, *stage_keys, bonusMod = 1.0, sleepTime = 0):
         if True in [self.stageBoss.moving(stage_key) for stage_key in stage_keys]:
+            time.sleep(sleepTime)
             self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
         else:
             if self.stageJustMoved == True:
                 self.timeStageEnd = time.monotonic()
                 self.stageJustMoved = False
+                time.sleep(sleepTime)
                 self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
-            elif time.monotonic() - self.timeStageEnd < (self.parent.TCcof*max(self.timeConstants) + self.parent.TCadd):
+            elif time.monotonic() - self.timeStageEnd < (bonusMod*self.parent.TCcof*max(self.timeConstants) + self.parent.TCadd):
+                time.sleep(sleepTime)
                 self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
             else:
                 pass
@@ -333,6 +336,7 @@ class DLscanWindow(QtWidgets.QWidget):
 
     def buildScans(self, THzStart, THzKey, gateStart, gateKey, delays, numScans, stepsize, numSteps, prescan, numRounds, rotKey, rotPositions, typo = 'THz'):
         scanList = []
+        print(typo)
         if typo == 'THz':
             for i in range(numRounds):
                 for rotPos in rotPositions:
@@ -342,7 +346,20 @@ class DLscanWindow(QtWidgets.QWidget):
                             gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False}
                             rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
                             print(i,j,k)
-                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k]} )
+                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
+        if typo == 'POPF':
+            for i in range(numRounds):
+                for rotPos in rotPositions:
+                    for j in range(len(delays)):
+                        for k in range(numScans[j]):
+                            THzKerby = {'stage_key':THzKey, 'start':THzStart - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
+                            gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
+                            rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
+                            print(i,j,k)
+                            if k == 0:
+                                scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'peakFinder'} )
+                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'POP'} )
+
         elif typo == 'po':
             for i in range(numRounds):
                 for rotPos in rotPositions:
@@ -355,7 +372,130 @@ class DLscanWindow(QtWidgets.QWidget):
                             scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k]} )
         return scanList
 
-    def initializeScan(self, *args, numSteps = 3, RDS = None):
+    def initializeScan(self, *args, numSteps = 3, RDS = None, scanType = 'norm'):
+        print(scanType)
+        self.commandQueue = []
+        self.stageBoss.clearAllChildren()
+        self.logActive = True
+        self.xlimit_change(self.plot, 0, 0)
+        self.xlimit_change(self.plot, 1, self.sWidgets['numsteps'].value()*self.sWidgets['stepsize'].value()/.15/1000)
+        if scanType == 'POP':
+            print('POP?')
+            rotKerb = args[2].copy()
+            stage_key = rotKerb['stage_key']
+            start_position = rotKerb['start']
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = stage_key, position = start_position))
+            self.commandQueue.append(self._lambMill(self._safetyCheckpoint, stage_key, bonusMod = 2.0, sleepTime = 0.2))
+            self.commandQueue.append(self._lambMill(self._update_stage_position, stage_key))
+            if rotKerb['subdir']:
+                    subdir = '\\{0:.1f}'.format(start_position)
+            gateKerb = args[1].copy()
+            gate_key = gateKerb['stage_key']
+            start_position = gateKerb['start']
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = gate_key, position = start_position))
+            self.commandQueue.append(self._lambMill(self._safetyCheckpoint, gate_key, bonusMod = 2.0, sleepTime = 0.2))
+            self.commandQueue.append(self._lambMill(self._update_stage_position, gate_key))
+            self._setStepsize(gate_key, gateKerb['stepsize'])
+            THzKerb = args[0].copy()
+            THz_key = THzKerb['stage_key']
+            start_position = self.THzPeak
+            self.THzStart = self.THzPeak
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = THz_key, position = start_position))
+            self.commandQueue.append(self._lambMill(self._safetyCheckpoint, THz_key, bonusMod = 2.0, sleepTime = 0.2))
+            self.commandQueue.append(self._lambMill(self._update_stage_position, THz_key))
+            self._setStepsize(THz_key, THzKerb['stepsize'])
+            self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
+            self.commandQueue.append(self._lambMill(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2]))
+            self.commandQueue.append(self._lambMill(self._addWaitTime, 7.0))
+            self.commandQueue.append(self.beginScan)
+            self.commandQueue.append(self.appendData)
+            self.commandQueue.append(self.updatePlot)
+            for j in range(1,numSteps):
+                self.commandQueue.append(self._lambMill(self._moveStep, stage_key = gate_key))
+                self.commandQueue.append(self._lambMill(self._moveStep, stage_key = THz_key))
+                self.commandQueue.append(self._lambMill(self._safetyCheckpoint, *[THz_key, gate_key]))
+                self.commandQueue.append(self.appendData)
+                self.commandQueue.append(self.updatePlot)
+            self.commandQueue.append(self.stopScan)
+        elif scanType == 'peakFinder':
+            print('peakFinder?')
+            self.logActive = False
+            rotKerb = args[2].copy()
+            stage_key = rotKerb['stage_key']
+            start_position = rotKerb['start']
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = stage_key, position = start_position))
+            self.commandQueue.append(self._lambMill(self._safetyCheckpoint, stage_key, sleepTime = 0.2))
+            self.commandQueue.append(self._lambMill(self._update_stage_position, stage_key))
+            gateKerb = args[1].copy()
+            gate_key = gateKerb['stage_key']
+            start_position = gateKerb['start']
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = gate_key, position = start_position))
+            self.commandQueue.append(self._lambMill(self._safetyCheckpoint, gate_key, sleepTime = 0.2))
+            self.commandQueue.append(self._lambMill(self._update_stage_position, gate_key))
+            self._setStepsize(gate_key, gateKerb['stepsize'])
+            THzKerb = args[0].copy()
+            THz_key = THzKerb['stage_key']
+            if self.firstTime:
+                self.THzPeak = THzKerb['start']
+                start_position = self.THzPeak - 0.060
+                self.THzStart = self.THzPeak - 0.060
+                self.firstTime = False
+            else:
+                start_position = self.THzPeak - 0.060
+                self.THzStart = self.THzPeak - 0.060
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = THz_key, position = start_position))
+            self.commandQueue.append(self._lambMill(self._safetyCheckpoint, THz_key, sleepTime = 0.2))
+            self.commandQueue.append(self._lambMill(self._update_stage_position, THz_key))
+            self._setStepsize(THz_key, 3.0)
+            self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
+            self.commandQueue.append(self._lambMill(self._addWaitTime, 3.0))
+            self.commandQueue.append(self.beginScan)
+            self.commandQueue.append(self.appendData)
+            self.commandQueue.append(self.updatePlot)
+            for j in range(1,40):
+                self.commandQueue.append(self._lambMill(self._moveStep, stage_key = THz_key))
+                self.commandQueue.append(self._lambMill(self._safetyCheckpoint, *[THz_key]))
+                self.commandQueue.append(self.appendData)
+                self.commandQueue.append(self.updatePlot)
+            self.commandQueue.append(self.determineTHzPeak)
+            self.commandQueue.append(self.stopScan)
+            self.xlimit_change(self.plot, 0, 0)
+            self.xlimit_change(self.plot, 1, 40*3.0/.15/1000)
+        else:
+            print('initialize ['+','.join([str(x) for x in RDS])+']')
+            self.commandQueue = []
+            movingKeys = []
+            subdir = ''
+            self.stageBoss.clearAllChildren()
+            for arg in args:
+                print(arg)
+                stage_key = arg['stage_key']
+                start = arg['start']
+                self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = stage_key, position = start))
+                self.commandQueue.append(self._lambMill(self._safetyCheckpoint, stage_key))
+                self.commandQueue.append(self._lambMill(self._update_stage_position, stage_key))
+                if arg['moving']:
+                    movingKeys.append(stage_key)
+                    self._setStepsize(stage_key, arg['stepsize']) # instead of this we just have to set step size
+                    if stage_key == 'ESP1':
+                        self.THzStart = start
+                if arg['subdir']:
+                    subdir = '\\{0:.1f}'.format(start)
+            self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
+            self.commandQueue.append(self._lambMill(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2]))
+            self.commandQueue.append(self._lambMill(self._addWaitTime, 3.0))
+            self.commandQueue.append(self.beginScan)
+            self.commandQueue.append(self.appendData)
+            self.commandQueue.append(self.updatePlot)
+            for j in range(1,numSteps):
+                for i in range(len(movingKeys)):
+                    self.commandQueue.append(self._lambMill(self._moveStep, stage_key = movingKeys[i]))
+                self.commandQueue.append(self._lambMill(self._safetyCheckpoint, *movingKeys))
+                self.commandQueue.append(self.appendData)
+                self.commandQueue.append(self.updatePlot)
+            self.commandQueue.append(self.stopScan)
+
+    def initializeScanV1(self, *args, numSteps = 3, RDS = None):
         # arg = {'index':stageIndex, 'start':startPosition, 'moving':True/False, 'stepsize':stepSize, 'controller':theControllerName}
         print('initialize ['+','.join([str(x) for x in RDS])+']')
         self.commandQueue = []
@@ -366,7 +506,7 @@ class DLscanWindow(QtWidgets.QWidget):
             print(arg)
             stage_key = arg['stage_key']
             start = arg['start']
-            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = stage_key, start = start))
+            self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = stage_key, position = start))
             self.commandQueue.append(self._lambMill(self._safetyCheckpoint, stage_key))
             self.commandQueue.append(self._lambMill(self._update_stage_position, stage_key))
             if arg['moving']:
@@ -389,10 +529,18 @@ class DLscanWindow(QtWidgets.QWidget):
             self.commandQueue.append(self.updatePlot)
         self.commandQueue.append(self.stopScan)
 
+    def determineTHzPeak(self):
+        arrY = np.array(self.y[1]['live'])
+        print(self.THzPeak)
+        self.THzPeak = self.THzPeak + (np.argmax(arrY) - 20)*3.0/1000
+        print(self.THzPeak)
 
+    def _moveStageAbsolute(self, stage_key, position):
+        self.stageBoss.moveStageAbsolute(stage_key, position)
+        self.stageJustMoved = True
 
-    def _moveStageAbsolute(self, stage_key, start):
-        self.stageBoss.moveStageAbsolute(stage_key, start)
+    def _addWaitTime(self, sleepTime):
+        time.sleep(sleepTime)
 
     def xlimit_change(self, plot_canvas, index, value):
         plot_canvas.set_xlimit(index, value)
@@ -528,7 +676,10 @@ class HungryHungryHippo():
         return open(fn + self.extension, 'w')
     
     def closeFile(self):
-        self.wto.close()
+        try:
+            self.wto.close()
+        except:
+            print('no file to close')
 
 class HungryMeasuring():
     def __init__(self, parent, delays, scanperround, numrounds, numsteps, path, filename, extension, startnum, comments):

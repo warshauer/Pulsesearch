@@ -12,7 +12,6 @@ from PyQt5 import uic
 from PyQt5.QtCore import pyqtSlot
 import appClasses as dd
 #import qt5_controller as qc
-from warsh_comms import smsClient
 #from flowControllerClasses import Flowmeter
 from instrumentControl import esp301_GPIB, sr830
 import time

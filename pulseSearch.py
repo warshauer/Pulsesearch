@@ -18,7 +18,6 @@ from PyQt5 import uic
 from PyQt5.QtCore import pyqtSlot
 import appClasses as dd
 #import qt5_controller as qc
-from warsh_comms import smsClient
 #from flowControllerClasses import Flowmeter
 from instrumentControl import esp301_GPIB, sr830, CONEX
 import time
@@ -48,7 +47,6 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.ui.GL_plot.addWidget(self.plot,0,0,1,1)
 
         self._move = False
-        self.sms = smsClient()
         self._cmi = 0
         self._cmpn = 1
         self._toggles = {'1_op':True, '2_op':False}
@@ -561,7 +559,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         stringer = ''
         for key in temps:
             stringer = stringer + str(key) + ': ' + format(temps[key], '.2f') + ' K\n'
-        self.sms.send(stringer, self.LE_phonenumber.text())
+        print(stringer)
 
     def _storeSettings(self):
         stageSets = {}

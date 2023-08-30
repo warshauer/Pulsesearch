@@ -664,6 +664,11 @@
                <string>po</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>POPF</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
