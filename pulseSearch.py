@@ -419,7 +419,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     # ---- MAIN RUNTIME ----
     def runtime_functionV2(self):
         if self.instrumentsConnected:
-            self._updateQueueLen()
+            self._updateQueueLen() #hi
             self.executeQueue()
             self.refreshData()
             self._update_measurement_values()
@@ -433,7 +433,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.counter1 = 0
                 self._update_ref_freq()
             else:
-                self.counter1 += 1
+                self.counter1 += 1 
             self._speedCheck2(p1 = True)
 
     def executeQueue(self):
