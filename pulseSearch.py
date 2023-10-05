@@ -27,7 +27,7 @@ from scanProgV3 import DLscanWindow
 class pulsesearchWindow(QtWidgets.QMainWindow):
     def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
         QtWidgets.QMainWindow.__init__(self)
-        self.ui = uic.loadUi('pulsesearchv2.ui',self) # swap this to pyui5 instead, then we may export it out to a class to make generic, contain and sort widgets and variables
+        self.ui = uic.loadUi('pulsesearchv3.ui',self) # swap this to pyui5 instead, then we may export it out to a class to make generic, contain and sort widgets and variables
         self.resize(1700, 1000)
         self.me = whoami
         self.stageBoss = stageBoss()
@@ -65,8 +65,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
         self.quickFFT = quickFFTWindow(self)
         self.scanWindow = DLscanWindow(self)
+        self.savePlotWindow = savePlotWindow(self)
 
         self.PB_quickFFT.clicked.connect(lambda : self._openWindow(self.quickFFT))
+        self.PB_savePlot.clicked.connect(lambda : self._openWindow(self.savePlotWindow))
         self.PB_scans.clicked.connect(self._openScans)
         self.PB_connect.clicked.connect(self._connectInstruments)
         
@@ -415,6 +417,22 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             if len(x1LI) == len(y1LI) and len(x2LI) == len(y2LI):
                 self.plot.update_plot(x1LI/self.unitMod, x2LI/self.unitMod, y1LI, y2LI)
             self.workerFinished0 = True
+
+    def getPlotValues(self):
+        try:
+            xx = self.x*self.invert[0]/self.unitMod
+            plotVals = np.array([xx])
+            units = [str(self.CB_xUnits.currentText())]
+            if self._onPlot_[1]:
+                plotVals = np.concatenate((plotVals, np.array([self.y[1]])))
+                units.append(self.mWidgets[1]['sensitivity'].currentText().split('/')[0].split(' ')[1])
+            if self._onPlot_[2]:
+                plotVals = np.concatenate((plotVals, np.array([self.y[2]])))
+                units.append(self.mWidgets[2]['sensitivity'].currentText().split('/')[0].split(' ')[1])
+            return plotVals, units
+        except Exception as e:
+            print(e)
+            return None, None
 
     # ---- MAIN RUNTIME ----
     def runtime_functionV2(self):
@@ -974,3 +992,29 @@ class motionController():
 
     def moving(self, stage_key, index):
         return self.stages[stage_key].moving(axis_number = index)
+    
+class savePlotWindow(QtWidgets.QWidget):
+    def __init__(self, parent, whoami = 'savePlot'):
+        QtWidgets.QWidget.__init__(self)
+        self.ui = uic.loadUi('savePlot.ui',self)
+        self.resize(700, 100)
+        self.me = whoami
+        self.parent = parent
+
+        self.PB_browse.clicked.connect(self._browse)
+        self.PB_save.clicked.connect(self._save)
+
+    def _browse(self):
+        fname = QtWidgets.QFileDialog.getSaveFileName(self, ' Select File ', os.path.expanduser('~/Documents'), 'Text Files (*.txt)')
+        self.LE_path.setText(fname[0])
+
+    def _save(self):
+        plotVals, units = self.parent.getPlotValues()
+        if type(plotVals) == np.ndarray:
+            try:
+                np.savetxt(str(self.LE_path.text()), plotVals.T, fmt = '%.7f', header = ' '.join(units))
+                self.hide()
+            except Exception as e:
+                print(e)
+        else:
+            print('no save, empty plotVals')
