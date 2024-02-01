@@ -369,7 +369,7 @@ class DLscanWindow(QtWidgets.QWidget):
                             gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
                             rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
                             print(i,j,k)
-                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'POP'} )
+                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k]} )
         return scanList
 
     def initializeScan(self, *args, numSteps = 3, RDS = None, scanType = 'norm'):
@@ -398,8 +398,6 @@ class DLscanWindow(QtWidgets.QWidget):
             self._setStepsize(gate_key, gateKerb['stepsize'])
             THzKerb = args[0].copy()
             THz_key = THzKerb['stage_key']
-            if self.firstTime:
-                self.THzPeak = THzKerb['start']
             start_position = self.THzPeak
             self.THzStart = self.THzPeak
             self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = THz_key, position = start_position))
@@ -479,7 +477,8 @@ class DLscanWindow(QtWidgets.QWidget):
                 if arg['moving']:
                     movingKeys.append(stage_key)
                     self._setStepsize(stage_key, arg['stepsize']) # instead of this we just have to set step size
-                    self.THzStart = start
+                    if stage_key == 'ESP1':
+                        self.THzStart = start
                 if arg['subdir']:
                     subdir = '\\{0:.1f}'.format(start)
             self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
