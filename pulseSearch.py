@@ -106,10 +106,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                                 'mn':self.PB_mn2, 'mp':self.PB_mp2, 'link':self.CB_linkedstage2, 'ss':self.SB_ss2, 'si':self.SB_si2, 'multiplier':self.SB_multiplier2, 
                                 'pmm':self.LE_pmm2, 'home':self.LE_home2, 'stop':self.PB_stop2, 'updatefrequency':self.SB_updateFreq2, 'unitbox':self.CB_units2, 
                                 'xlead':self.RB_xAxis2, 'unitlabel':self.L_units2}
-            self.sWidgets['CONEX'] = {'sn':self.PB_sn3, 'sp':self.PB_sp3, 'sethome':self.PB_sethome3, 'returnhome':self.PB_returnhome3, 
-                                'mn':self.PB_mn3, 'mp':self.PB_mp3, 'link':self.CB_linkedstage3, 'ss':self.SB_ss3, 'si':self.SB_si3, 'multiplier':self.SB_multiplier3, 
-                                'pmm':self.LE_pmm3, 'home':self.LE_home3, 'stop':self.PB_stop3, 'updatefrequency':self.SB_updateFreq3, 'unitbox':self.CB_units3, 
-                                'xlead':self.RB_xAxis3, 'unitlabel':self.L_units3}
+            if False:
+                self.sWidgets['CONEX'] = {'sn':self.PB_sn3, 'sp':self.PB_sp3, 'sethome':self.PB_sethome3, 'returnhome':self.PB_returnhome3, 'mn':self.PB_mn3, 'mp':self.PB_mp3, 'link':self.CB_linkedstage3, 'ss':self.SB_ss3, 'si':self.SB_si3, 'multiplier':self.SB_multiplier3, 'pmm':self.LE_pmm3, 'home':self.LE_home3, 'stop':self.PB_stop3, 'updatefrequency':self.SB_updateFreq3, 'unitbox':self.CB_units3, 'xlead':self.RB_xAxis3, 'unitlabel':self.L_units3}
 
         if True:
             self.unitMod = 0.15
@@ -160,21 +158,23 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def _stageControllerInitialization(self, stagePort):
         # swap out the following line for whichever class connects to the stage controller:
         self.esp301 = esp301_GPIB(stagePort)
-        self.conex = CONEX(port = 3)
+        #self.conex = CONEX(port = 3)
         # update how many stages are active:
         #self.activeStages = [1, 2, 3]#, 4]
         self.xLeadingStage = 'ESP1'
-        stages = {'ESP1':self.esp301, 'ESP2':self.esp301, 'ESP3':self.esp301, 'CONEX':self.conex}
+        stages = {'ESP1':self.esp301, 'ESP2':self.esp301, 'ESP3':self.esp301}#, 'CONEX':self.conex}
         self.activeStages = list(stages.keys())
-        self.stageBoss.assignMotionController(motionController(stages, unitMultiplier = {'ESP1':0.001, 'ESP2':0.001, 'ESP3':0.001, 'CONEX':1}))
+        self.stageBoss.assignMotionController(motionController(stages, unitMultiplier = {'ESP1':0.001, 'ESP2':0.001, 'ESP3':0.001}))#, 'CONEX':1}))
+        indy500 = 1
         for key in stages:
             if key in list(self.stageValueInit.keys()):
                 self.stageBoss.addStage(key, self.stageValueInit[key].copy())
                 self.stageBoss.clearChildren(key)
             else:
                 print('no stage recall')
-                self.stageBoss.addStage(key, {'home':0.00, 'position':0.0, 'link':None, 'children':[], 'stepsize':5, 'index':1, 'multiplier':1, 'updatefrequency':-1, 
+                self.stageBoss.addStage(key, {'home':0.00, 'position':0.0, 'link':None, 'children':[], 'stepsize':5, 'index':indy500, 'multiplier':1, 'updatefrequency':1, 
                                               'updatetime':time.monotonic()})
+                indy500 += 1
         self._stageInterfaceInitialization(list(self.stageBoss.keys()))
 
     def _stageInterfaceInitialization(self, stage_keys):
@@ -307,8 +307,15 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def _link_enable(self, stage_key, boo):
         for widg in ['mn', 'sn', 'sp', 'mp', 'returnhome', 'stop', 'ss', 'si']:
             self.sWidgets[stage_key][widg].setEnabled(boo)
-    def _clear_all_children(self):
-        self.stageBoss.clearAllChildren()
+    def _clear_all_children(self, full = True):
+        if full:
+            self.stageBoss.clearAllChildren()
+        else:
+            self.stageBoss.clearAllChildren()
+            for stage_key in self.stageBoss.keys():
+                link = str(self.sWidgets[stage_key]['link'].currentText())
+                if link != 'None':
+                    self.set_stage_link(stage_key)
 
 
     def _set_home(self, stage_key):
@@ -331,6 +338,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.y[1] = np.array([0])
             self.y[2] = np.array([0])
         self._move_stage_home(stage_key)
+        self._clear_all_children(full = False)
 
     def _moveStageStep(self, stage_key, pn):
         self.stageBoss.moveStageStep(stage_key, pn)
@@ -370,9 +378,13 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.y[key][-1] = self._get_measurement(self.lockins[key])
             self.y[key] = np.append(self.y[key], [self._get_measurement(self.lockins[key])])
             #self.y[key].append(self._get_measurement(self.lockins[key]))
+            print('1')
         self._update_measurement_values()
+        print('2')
         self._updateStagePosition(*stage_keys)
+        print('3')
         pos = self.stageBoss.getStagePosition(self.xLeadingStage) - self.stageBoss.getHomePosition(self.xLeadingStage)
+        print('4')
         self.x[-1] = pos
         self.x = np.append(self.x, [pos])
 
@@ -468,7 +480,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.commandQueue.append(self._lambMill(func, *args, **kwargs))
         print('add to queue: ', func)
 
-    def _safetyCheckpoint(self, *stage_keys):
+    def _safetyCheckpointOriginal(self, *stage_keys):
         if True in [self.stageBoss.moving(stage_key) for stage_key in stage_keys]:
             self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
         else:
@@ -480,6 +492,16 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
             else:
                 pass
+
+    def _safetyCheckpoint(self, *stage_keys):
+        if self.stageJustMoved == True:
+            self.timeStageEnd = time.monotonic()
+            self.stageJustMoved = False
+            self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
+        elif time.monotonic() - self.timeStageEnd < (self.TCcof*max(self.timeConstants) + self.TCadd):
+            self.commandQueue.insert(0, self._lambMill(self._safetyCheckpoint, *stage_keys))
+        else:
+            pass
     
     def _safetyCheckpointMEGA(self, *stage_keys):
         while True in [self.stageBoss.moving(stage_key) for stage_key in stage_keys]:
@@ -523,17 +545,22 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
 
     def _updateAllStagePositions(self):
         try:
-            self.stageBoss.updateStagePositions()
+            if self._move != True:
+                self.stageBoss.updateStagePositions()
             for stage_key in list(self.sWidgets.keys()):
                 pos = self.stageBoss.getStagePosition(stage_key)
                 self.sWidgets[stage_key]['pmm'].setText(format(pos, '.4f'))
         except Exception as e:
             print(e)
+    
     def _updateStagePosition(self, *stage_keys):
         try:
             for stage_key in stage_keys:
+                print('5 ', stage_key)
                 self.stageBoss.updateStagePosition(stage_key)
+                print('6 ', stage_key)
                 pos = self.stageBoss.getStagePosition(stage_key)
+                print('7 ', stage_key)
                 self.sWidgets[stage_key]['pmm'].setText(format(pos, '.4f'))
         except Exception as e:
             print(e)
@@ -944,8 +971,9 @@ class stageBoss():
             else:
                 pass
     def updateStagePosition(self, stage_key):
+        #time.sleep(0.1)
         self.stageValues[stage_key]['position'] = self.motionController.get_absolute_position(stage_key = stage_key, index = self.stageValues[stage_key]['index'])
-        self.stageValues[stage_key]['updatetime'] - time.monotonic()
+        self.stageValues[stage_key]['updatetime'] = time.monotonic()
     def getStagePosition(self, stage_key):
         return self.stageValues[stage_key]['position']
 

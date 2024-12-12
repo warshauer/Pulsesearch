@@ -38,6 +38,7 @@ class esp301_GPIB():
 
     def write_command(self, ascii_cmd, param1 = '', param2 = []):
         try:
+            time.sleep(0.05)
             self.instrument.write(str(param1) + ascii_cmd + ','.join(list(map(lambda x: str(x), param2))) )
         except:
             time.sleep(2)
@@ -55,6 +56,7 @@ class esp301_GPIB():
 
     def query_command(self, ascii_cmd, param1 = '', param2 = []):
         try:
+            time.sleep(0.05)
             return self.instrument.query(str(param1) + ascii_cmd + '?' + ','.join(list(map(lambda x: str(x), param2))) )
         except:
             time.sleep(2)

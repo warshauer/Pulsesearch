@@ -19,7 +19,7 @@ import time
 class DLscanWindow(QtWidgets.QWidget):
     def __init__(self, parent, whoami = 'DLscan'):
         QtWidgets.QWidget.__init__(self)
-        self.ui = uic.loadUi('scansV3.ui',self)
+        self.ui = uic.loadUi('scansV3p1.ui',self)
         self.resize(1600, 950)
         self.me = whoami
         self.parent = parent
@@ -347,6 +347,15 @@ class DLscanWindow(QtWidgets.QWidget):
                             rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
                             print(i,j,k)
                             scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), rotKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
+        if typo == 'THz_2stage':
+            for i in range(numRounds):
+                for j in range(len(delays)):
+                    for k in range(numScans[j]):
+                        THzKerby = {'stage_key':THzKey, 'start':THzStart - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
+                        gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False}
+                        #rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
+                        print(i,j,k)
+                        scanList.append( {'args':[THzKerby.copy(), gateKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
         if typo == 'POPF':
             for i in range(numRounds):
                 for rotPos in rotPositions:
