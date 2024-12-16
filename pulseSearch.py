@@ -22,7 +22,7 @@ import appClasses as dd
 from instrumentControl import esp301_GPIB, sr830, CONEX
 import time
 from scipy.fft import fft, fftfreq
-from scanProgV3 import DLscanWindow
+from scanProgV3p3 import DLscanWindow
 
 class pulsesearchWindow(QtWidgets.QMainWindow):
     def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
