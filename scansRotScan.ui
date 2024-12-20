@@ -1041,49 +1041,7 @@
            <property name="spacing">
             <number>4</number>
            </property>
-           <item row="2" column="2">
-            <widget class="QDoubleSpinBox" name="SB_gateRefPos">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>5</number>
-             </property>
-             <property name="minimum">
-              <double>-99.989999999999995</double>
-             </property>
-             <property name="value">
-              <double>55.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QDoubleSpinBox" name="SB_THzRefPos">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>5</number>
-             </property>
-             <property name="minimum">
-              <double>-200.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>200.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.150000000000000</double>
-             </property>
-             <property name="value">
-              <double>22.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_6">
              <property name="font">
               <font>
@@ -1098,8 +1056,8 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QDoubleSpinBox" name="SB_gatePos">
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="SB_prescan">
              <property name="font">
               <font>
                <pointsize>12</pointsize>
@@ -1109,10 +1067,13 @@
               <number>5</number>
              </property>
              <property name="minimum">
-              <double>-99.989999999999995</double>
+              <double>-200.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>200.000000000000000</double>
              </property>
              <property name="value">
-              <double>55.000000000000000</double>
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -1136,43 +1097,22 @@
               </font>
              </property>
              <property name="text">
-              <string>0ps sample position:</string>
+              <string>0ps position:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
-           <item row="3" column="2">
-            <widget class="QPushButton" name="PB_moveToStart">
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_8">
              <property name="font">
               <font>
                <pointsize>12</pointsize>
               </font>
              </property>
              <property name="text">
-              <string>move to start</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="SB_prescan">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="decimals">
-              <number>5</number>
-             </property>
-             <property name="minimum">
-              <double>-200.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>200.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.100000000000000</double>
+              <string>THz</string>
              </property>
             </widget>
            </item>
@@ -1200,47 +1140,38 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_8">
+           <item row="1" column="2">
+            <widget class="QDoubleSpinBox" name="SB_gatePos">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="decimals">
+              <number>5</number>
+             </property>
+             <property name="minimum">
+              <double>-99.989999999999995</double>
+             </property>
+             <property name="value">
+              <double>55.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="PB_moveToStart">
              <property name="font">
               <font>
                <pointsize>12</pointsize>
               </font>
              </property>
              <property name="text">
-              <string>THz</string>
+              <string>move to start</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_16">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>0ps reference position:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
+           <item row="0" column="0">
             <widget class="QPushButton" name="PB_set2current">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Set (THz, Gate)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="QPushButton" name="PB_set2currentRef">
              <property name="font">
               <font>
                <pointsize>12</pointsize>

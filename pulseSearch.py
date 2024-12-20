@@ -22,7 +22,7 @@ import appClasses as dd
 from instrumentControl import esp301_GPIB, sr830, CONEX
 import time
 from scipy.fft import fft, fftfreq
-from scanProgV3p3 import DLscanWindow
+from scanProgV3p4 import DLscanWindow
 
 class pulsesearchWindow(QtWidgets.QMainWindow):
     def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
@@ -315,7 +315,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             for stage_key in self.stageBoss.keys():
                 link = str(self.sWidgets[stage_key]['link'].currentText())
                 if link != 'None':
-                    self.set_stage_link(stage_key)
+                    self._set_stage_link(stage_key)
 
 
     def _set_home(self, stage_key):
