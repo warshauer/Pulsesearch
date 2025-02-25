@@ -220,6 +220,7 @@ class DLscanWindow(QtWidgets.QWidget):
         else:
             y1 = readIn[0]
             y2 = 0.00
+            self.y[2]['live'].append(y2)
         #y2 = self._get_measurement(self.lockins[2])
         #self.y[2]['live'].append(y2)
         self._update_stage_position(*self.movingKeys)
@@ -449,7 +450,7 @@ class DLscanWindow(QtWidgets.QWidget):
         print(typo)
         THzPositions = [THzStart, THzStartRef]
         gatePositions = [gateStart, gateStartRef]
-        if typo == 'THz_equ':
+        if typo == 'THz_equV1':
             dirnames = ['samp', 'ref']
             for i in range(numRounds):
                 for j in range(len(delays)):
@@ -463,7 +464,43 @@ class DLscanWindow(QtWidgets.QWidget):
                             #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
                             print(i,j,jj,k)
                             scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
+        if typo == 'THz_equ':
+            dirnames = ['samp', 'ref']
+            for i in range(numRounds):
+                for j in range(len(delays)):
+                    for jj in range(len(srPositions)):
+                        if jj == 0:
+                            for k in range(numScans[j]):
+                                startPosTHz = THzPositions[jj]
+                                startPosGate = gatePositions[jj]
+                                THzKerby = {'stage_key':THzKey, 'start':startPosTHz - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False, 'subdirname':None}
+                                gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
+                                xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':dirnames[jj]}
+                                #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
+                                print(i,j,jj,k)
+                                scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
+                        else:
+                            k=0
+                            startPosTHz = THzPositions[jj]
+                            startPosGate = gatePositions[jj]
+                            THzKerby = {'stage_key':THzKey, 'start':startPosTHz - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False, 'subdirname':None}
+                            gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
+                            xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':dirnames[jj]}
+                            #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
+                            print(i,j,jj,k)
+                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
         if typo == 'THz':
+            dirnames = ['samp', 'ref']
+            for i in range(numRounds):
+                for j in range(len(delays)):
+                    for k in range(numScans[j]):
+                        THzKerby = {'stage_key':THzKey, 'start':startPosTHz - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False, 'subdirname':None}
+                        gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
+                        #xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':dirnames[jj]}
+                        #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
+                        print(i,j,jj,k)
+                        scanList.append( {'args':[THzKerby.copy(), gateKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
+        if typo == 'THzOG':
             for i in range(numRounds):
                 for rotPos in rotPositions:
                     for j in range(len(delays)):
@@ -687,7 +724,7 @@ class DLscanWindow(QtWidgets.QWidget):
                         subdir = '\\{0:.1f}'.format(start)
             self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
             self.commandQueue.append(self._lambMill(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2]))
-            self.commandQueue.append(self._lambMill(self._addWaitTime, 3.0))
+            self.commandQueue.append(self._lambMill(self._addWaitTime, 15.0))
             self.commandQueue.append(self.beginScan)
             self.commandQueue.append(self.appendData)
             self.commandQueue.append(self.updatePlot)
@@ -720,7 +757,7 @@ class DLscanWindow(QtWidgets.QWidget):
                     subdir = '\\{0:.1f}'.format(start)
             self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
             self.commandQueue.append(self._lambMill(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2]))
-            self.commandQueue.append(self._lambMill(self._addWaitTime, 3.0))
+            self.commandQueue.append(self._lambMill(self._addWaitTime, 4.0))
             self.commandQueue.append(self.beginScan)
             self.commandQueue.append(self.appendData)
             self.commandQueue.append(self.updatePlot)
