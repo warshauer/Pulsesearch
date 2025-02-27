@@ -185,6 +185,31 @@ class sr830():
             return 0.0
         else:
             return data[0]
+        
+    def get_specific_output(self, output, num_data_points = 1):
+        if output == 'Y':
+            ask = 2
+        elif output == 'R':
+            ask = 3
+        elif output == 'theta':
+            ask = 4
+        else:
+            ask = 1
+        data = []
+        for i in range(num_data_points):
+            v = self.query_command('OUTP', [ask]) 
+            try:
+                v = float(v.strip('\n')) * self.get_input_config_scaling_factor() * self.get_sensitivity_scaling_factor()
+            except:
+                pass
+            if (type(v) == float):
+                data.append(v)
+        if (len(data) > 0):
+            return sum(data)/len(data)
+        elif data == []:
+            return 0.0
+        else:
+            return data[0]
 
     def auto_phase(self):
         self.write_command('APHS')

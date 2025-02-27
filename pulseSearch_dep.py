@@ -22,13 +22,12 @@ import appClasses as dd
 from instrumentControl import esp301_GPIB, sr830, CONEX
 import time
 from scipy.fft import fft, fftfreq
-#from scanProgV3p4 import DLscanWindow
-from scanProgV4p0 import DLscanWindow
+from scanProgV3p4 import DLscanWindow
 
 class pulsesearchWindow(QtWidgets.QMainWindow):
-    def __init__(self, whoami = 'pulseSearch', version = 'v4.0', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
+    def __init__(self, whoami = 'pulseSearch', version = 'v1.3', ESP_port = 1, lockin1_port = 8, lockin2_port = 7):
         QtWidgets.QMainWindow.__init__(self)
-        self.ui = uic.loadUi('pulsesearchv4.ui',self) # swap this to pyui5 instead, then we may export it out to a class to make generic, contain and sort widgets and variables
+        self.ui = uic.loadUi('pulsesearchv3.ui',self) # swap this to pyui5 instead, then we may export it out to a class to make generic, contain and sort widgets and variables
         self.resize(1700, 1000)
         self.me = whoami
         self.stageBoss = stageBoss()
@@ -44,18 +43,18 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self._sensitivityList = [2, 5, 10, 20, 50, 100, 200, 500, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1]
 
         #self.plot = dd.fastCanvas(self, line_dict = line_dict, xlabel = 'time (ps)', plot_dict = plot_dict, autolim = False, xlimits = [-1, 1], last_point = True)
-        self.plot = PulsesearchCanvasXY(self, xlabel = 'time (ps)', ylabel1 = 'lock-in 1', ylabel2 = 'lock-in 2', xlimits = [-1, 1])
+        self.plot = PulsesearchCanvas(self, xlabel = 'time (ps)', ylabel1 = 'lock-in 1', ylabel2 = 'lock-in 2', xlimits = [-1, 1])
         self.ui.GL_plot.addWidget(self.plot,0,0,1,1)
 
         self._move = False
         self._cmi = 0
         self._cmpn = 1
-        #self._toggles = {'1_opX':True, '1_opY':True, '2_opX':False, '2_opY':False}
+        self._toggles = {'1_op':True, '2_op':False}
         self.avgCounter = 0
         self.counter0 = 0
         self.counter1 = 0
         self.TCsafety = True
-        self._onPlot_ = {'1X':True, '1Y':True, '2X':False, '2Y':False}
+        self._onPlot_ = {1:True, 2:False}
 
         self.motionAllowed = True
         self.addNext = False
@@ -78,14 +77,12 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         if True:
             self.yVals = {1:[0,0,0,0,0,0,0,0,0,0], 2:[0,0,0,0,0,0,0,0,0,0]}
             self.mWidgets = {}
-            self.mWidgets[1] = {'E':self.LE_E1, 'freq':self.LE_freq1, 'onplotX':self.CB_onplot1X, 'onplotY':self.CB_onplot1Y, 'sensitivity':self.CB_sens1, 'timeconstant':self.CB_tc1, 'inputconfig':self.CB_ic1, 'ylim0':self.SB_ylim01, 'ylim1':self.SB_ylim11, 'autophase':self.PB_autophase1, 'displayE':self.CB_dispE1, 'ras':self.SP_ras1}
-            self.mWidgets[2] = {'E':self.LE_E2, 'freq':self.LE_freq2, 'onplotX':self.CB_onplot2X, 'onplotY':self.CB_onplot2Y, 'sensitivity':self.CB_sens2, 'timeconstant':self.CB_tc2, 'inputconfig':self.CB_ic2, 'ylim0':self.SB_ylim02, 'ylim1':self.SB_ylim12, 'autophase':self.PB_autophase2, 'displayE':self.CB_dispE2, 'ras':self.SP_ras2}
+            self.mWidgets[1] = {'E':self.LE_E1, 'freq':self.LE_freq1, 'onplot':self.CB_onplot1, 'sensitivity':self.CB_sens1, 'timeconstant':self.CB_tc1, 'inputconfig':self.CB_ic1, 'ylim0':self.SB_ylim01, 'ylim1':self.SB_ylim11, 'autophase':self.PB_autophase1, 'displayE':self.CB_dispE1, 'ras':self.SP_ras1}
+            self.mWidgets[2] = {'E':self.LE_E2, 'freq':self.LE_freq2, 'onplot':self.CB_onplot2, 'sensitivity':self.CB_sens2, 'timeconstant':self.CB_tc2, 'inputconfig':self.CB_ic2, 'ylim0':self.SB_ylim02, 'ylim1':self.SB_ylim12, 'autophase':self.PB_autophase2, 'displayE':self.CB_dispE2, 'ras':self.SP_ras2}
 
 
-            self.mWidgets[1]['onplotX'].stateChanged.connect(lambda:self._onPlotPlot('1X', self.mWidgets[1]['onplotX'].isChecked()))
-            self.mWidgets[1]['onplotY'].stateChanged.connect(lambda:self._onPlotPlot('1Y', self.mWidgets[1]['onplotY'].isChecked()))
-            self.mWidgets[2]['onplotX'].stateChanged.connect(lambda:self._onPlotPlot('2X', self.mWidgets[2]['onplotX'].isChecked()))
-            self.mWidgets[2]['onplotY'].stateChanged.connect(lambda:self._onPlotPlot('2Y', self.mWidgets[2]['onplotY'].isChecked()))
+            self.mWidgets[1]['onplot'].stateChanged.connect(lambda:self._onPlotPlot(1, self.mWidgets[1]['onplot'].isChecked()))
+            self.mWidgets[2]['onplot'].stateChanged.connect(lambda:self._onPlotPlot(2, self.mWidgets[2]['onplot'].isChecked()))
 
             self.mWidgets[1]['sensitivity'].currentIndexChanged.connect(lambda : self._sensitivityChange(1, self.mWidgets[1]['sensitivity'].currentIndex()))
             self.mWidgets[1]['timeconstant'].currentIndexChanged.connect(lambda : self._timeconstantChange(1, self.mWidgets[1]['timeconstant'].currentIndex()))
@@ -246,11 +243,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.mWidgets[2][key].setEnabled(False)
         self.x = np.array([])
         self.y = {}
-        self.y[1] = {'X':np.array([]), 'Y':np.array([])}
-        self.y[2] = {'X':np.array([]), 'Y':np.array([])}
+        self.y[1] = np.array([])
+        self.y[2] = np.array([])
         for key in self.lockins:
-            self.y[key]['X'] = np.append(self.y[key]['X'], [self._get_measurement(self.lockins[key], 'X')])
-            self.y[key]['Y'] = np.append(self.y[key]['Y'], [self._get_measurement(self.lockins[key], 'Y')])
+            self.y[key] = np.append(self.y[key], [self._get_measurement(self.lockins[key])])
             self._sensitivityChange(key, self.lockins[key].get_sensitivity())
             self.timeConstants[key-1] = self._timeConstantList[self.lockins[key].get_time_constant()]
             self.mWidgets[key]['autophase'].clicked.connect(self.lockins[key].auto_phase)
@@ -339,8 +335,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         if self.xLeadingStage in stage_keys:
             self.x = np.array([0])
             self.y = {}
-            self.y[1] = {'X':np.array([0]), 'Y':np.array([0])}
-            self.y[2] = {'X':np.array([0]), 'Y':np.array([0])}
+            self.y[1] = np.array([0])
+            self.y[2] = np.array([0])
         self._move_stage_home(stage_key)
         self._clear_all_children(full = False)
 
@@ -379,13 +375,16 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def appendData(self, *stage_keys):
         self._speedCheck0(p1 = True)
         for key in self.lockins:
-            self.y[key]['X'][-1] = self._get_measurement(self.lockins[key], 'X')
-            self.y[key]['X'] = np.append(self.y[key]['X'], [self._get_measurement(self.lockins[key], 'X')])
-            self.y[key]['Y'][-1] = self._get_measurement(self.lockins[key], 'Y')
-            self.y[key]['Y'] = np.append(self.y[key]['Y'], [self._get_measurement(self.lockins[key], 'Y')])
+            self.y[key][-1] = self._get_measurement(self.lockins[key])
+            self.y[key] = np.append(self.y[key], [self._get_measurement(self.lockins[key])])
+            #self.y[key].append(self._get_measurement(self.lockins[key]))
+            print('1')
         self._update_measurement_values()
+        print('2')
         self._updateStagePosition(*stage_keys)
+        print('3')
         pos = self.stageBoss.getStagePosition(self.xLeadingStage) - self.stageBoss.getHomePosition(self.xLeadingStage)
+        print('4')
         self.x[-1] = pos
         self.x = np.append(self.x, [pos])
 
@@ -393,58 +392,42 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self._sample_interval = value
         self._timer.setInterval(self._sample_interval)
 
-    def _get_measurement(self, lockin, output = 'X'):
-        return lockin.get_specific_output(output)
+    def _get_measurement(self, lockin):
+        return lockin.get_output()
         
     def refreshData(self):
         for key in self.lockins:
             if self.mWidgets[key]['displayE'].currentIndex() == 3:
                 if self.TCsafety:
-                    yX = self._get_measurement(self.lockins[key], 'X')
-                    yY = self._get_measurement(self.lockins[key], 'Y')
-                    self.yVals[key].append(yX)
+                    y = self._get_measurement(self.lockins[key])
+                    self.yVals[key].append(y)
                     self.yVals[key] = self.yVals[key][1:]
-                    self.y[key]['X'][-1] = yX
-                    self.y[key]['Y'][-1] = yY
+                    self.y[key][-1] = y
                 else:
                     pass
             else:
-                yX = self._get_measurement(self.lockins[key], 'X')
-                yY = self._get_measurement(self.lockins[key], 'Y')
-                self.yVals[key].append(yX)
+                y = self._get_measurement(self.lockins[key])
+                self.yVals[key].append(y)
                 self.yVals[key] = self.yVals[key][1:]
-                self.y[key]['X'][-1] = yX
-                self.y[key]['Y'][-1] = yY
+                self.y[key][-1] = y
 
     def plotUpdate(self):
         if self.workerFinished0:
             self.workerFinished0 = False
-            if self._onPlot_['1X']:
-                x1LIX = self.x * self.invert[0]
-                y1LIX = self.y[1]['X']
+            if self._onPlot_[1]:
+                x1LI = self.x * self.invert[0]
+                y1LI = self.y[1]
             else:
-                x1LIX = np.array([])
-                y1LIX = np.array([])
-            if self._onPlot_['1Y']:
-                x1LIY = self.x * self.invert[0]
-                y1LIY = self.y[1]['Y']
+                x1LI = np.array([])
+                y1LI = np.array([])
+            if self._onPlot_[2]:
+                x2LI = self.x * self.invert[1]
+                y2LI = self.y[2]
             else:
-                x1LIY = np.array([])
-                y1LIY = np.array([])
-            if self._onPlot_['2X']:
-                x2LIX = self.x * self.invert[1]
-                y2LIX = self.y[2]['X']
-            else:
-                x2LIX = np.array([])
-                y2LIX = np.array([])
-            if self._onPlot_['2Y']:
-                x2LIY = self.x * self.invert[1]
-                y2LIY = self.y[2]['Y']
-            else:
-                x2LIY = np.array([])
-                y2LIY = np.array([])
-            if len(x1LIX) == len(y1LIX) and len(x2LIX) == len(y2LIX) and len(x1LIY) == len(y1LIY) and len(x2LIY) == len(y2LIY):
-                self.plot.update_plot(x1LIX/self.unitMod, x1LIY/self.unitMod, x2LIX/self.unitMod, x2LIY/self.unitMod, y1LIX, y1LIY, y2LIX, y2LIY)
+                x2LI = np.array([])
+                y2LI = np.array([])
+            if len(x1LI) == len(y1LI) and len(x2LI) == len(y2LI):
+                self.plot.update_plot(x1LI/self.unitMod, x2LI/self.unitMod, y1LI, y2LI)
             self.workerFinished0 = True
 
     def getPlotValues(self):
@@ -452,18 +435,12 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             xx = self.x*self.invert[0]/self.unitMod
             plotVals = np.array([xx])
             units = [str(self.CB_xUnits.currentText())]
-            if self._onPlot_['1X']:
-                plotVals = np.concatenate((plotVals, np.array([self.y[1]['X']])))
-                units.append('1X_'+self.mWidgets[1]['sensitivity'].currentText().split('/')[0].split(' ')[1])
-            if self._onPlot_['1Y']:
-                plotVals = np.concatenate((plotVals, np.array([self.y[1]['Y']])))
-                units.append('1Y_'+self.mWidgets[2]['sensitivity'].currentText().split('/')[0].split(' ')[1])
-            if self._onPlot_['2X']:
-                plotVals = np.concatenate((plotVals, np.array([self.y[2]['X']])))
-                units.append('2X_'+self.mWidgets[1]['sensitivity'].currentText().split('/')[0].split(' ')[1])
-            if self._onPlot_['2Y']:
-                plotVals = np.concatenate((plotVals, np.array([self.y[2]['Y']])))
-                units.append('2Y_'+self.mWidgets[2]['sensitivity'].currentText().split('/')[0].split(' ')[1])
+            if self._onPlot_[1]:
+                plotVals = np.concatenate((plotVals, np.array([self.y[1]])))
+                units.append(self.mWidgets[1]['sensitivity'].currentText().split('/')[0].split(' ')[1])
+            if self._onPlot_[2]:
+                plotVals = np.concatenate((plotVals, np.array([self.y[2]])))
+                units.append(self.mWidgets[2]['sensitivity'].currentText().split('/')[0].split(' ')[1])
             return plotVals, units
         except Exception as e:
             print(e)
@@ -538,8 +515,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
     def _lambMill(self, func, *args, **kwargs):
         return lambda:func(*args, **kwargs)
 
-    def _onPlotPlot(self, key, bool):
-        self._onPlot_[key] = bool
+    def _onPlotPlot(self, index, bool):
+        self._onPlot_[index] = bool
     
     def _update_measurement_values(self):
         for key in self.lockins:
@@ -552,12 +529,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                     self.avgCounter += 1
             elif self.mWidgets[key]['displayE'].currentIndex() == 2:
                 try:
-                    self.mWidgets[key]['E'].setText(format(self.y[key]['X'][-2], '.3f'))
+                    self.mWidgets[key]['E'].setText(format(self.y[key][-2], '.3f'))
                 except:
-                    self.mWidgets[key]['E'].setText(format(self.y[key]['X'][-1], '.3f'))
+                    self.mWidgets[key]['E'].setText(format(self.y[key][-1], '.3f'))
                     print('small list huh')
-            elif self.mWidgets[key]['displayE'].currentIndex() == 4:
-                self.mWidgets[key]['E'].setText(format(self.y[key]['Y'][-1], '.3f'))
             else:
                 self.mWidgets[key]['E'].setText(format(self.yVals[key][-1], '.3f'))
 
@@ -828,7 +803,7 @@ class quickFFTWindow(QtWidgets.QWidget):
     def add(self):
         try:
             x = np.array(self.parent.x[:-1])/.15
-            y = self.parent.y[1]['X'][:-1]
+            y = self.parent.y[1][:-1]
             try:
                 xf, yf = self.FFT(x, y)
             except Exception as e:
@@ -939,169 +914,6 @@ class PulsesearchCanvas(FigureCanvas):
 
     def updateLastPoint(self, x0 = [], x1 = [], y0 = [], y1 = []):
         self._updateLastPoint(x0, x1, y0, y1)
-
-class PulsesearchCanvasXY(FigureCanvas):
-    def __init__(self, parent, xlabel = '', ylabel1 = '', ylabel2 = '', xlimits = [-1,1], ylimits = np.array([[-1,1],[-1,1]])):
-        super().__init__(mpl.figure.Figure())
-        self.parent = parent
-        
-        self.ax0 = self.figure.subplots()
-        self.ax0.set_ylabel(ylabel1, fontsize=16)
-        self.ax0.set_xlabel(xlabel, fontsize=16)
-        self.ax0.tick_params(axis='y', labelsize = 10)
-        self.ax0.minorticks_on()
-        self.ax0.grid(which = 'major', color = 'yellow', linestyle = '--', linewidth = 0.5)
-        self.ax0.grid(which = 'minor', color = 'yellow', linestyle = '--', linewidth = 0.25, alpha = .5)
-        self.ax0.set_facecolor((0,0,0))
-
-        self.xlimits = xlimits
-        self.ylimits = ylimits
-
-        self.ax1 = self.ax0.twinx()
-        #self.ax1.spines.right.set_position(("axes", 1+.07*(0-1)))
-        self.ax1.tick_params(axis='y', labelsize = 10)
-        self.ax1.set_ylabel(ylabel2, fontsize=16)
-
-        self.line0X, = self.ax0.plot([], [], color = 'w', linewidth = 1)
-        self.line1X, = self.ax1.plot([], [], color = 'tab:red', linewidth = 1)
-        self.line0Y, = self.ax0.plot([], [], color = 'w', linewidth = 1, linestyle = 'dashed')
-        self.line1Y, = self.ax1.plot([], [], color = 'tab:red', linewidth = 1, linestyle = 'dashed')
-        self.dot0X, = self.ax0.plot([], [], ms = 7, color = 'c',marker = 'D',ls = '')
-        self.dot1X, = self.ax1.plot([], [], ms = 7, color = 'm',marker = 'D',ls = '')
-        self.dot0Y, = self.ax0.plot([], [], ms = 4, color = 'c',marker = 's',ls = '')
-        self.dot1Y, = self.ax1.plot([], [], ms = 4, color = 'm',marker = 's',ls = '')
-
-        self.figure.subplots_adjust(top=0.985,bottom=0.07,left=0.07,right=0.93,hspace=0.1,wspace=0.1)
-
-        return
-
-    def update_plot(self, x0X = [], x0Y = [], x1X = [], x1Y = [], y0X = [], y0Y = [], y1X = [], y1Y = []):
-        self._update_canvas(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
-
-    def set_ylimit(self, axis, index, value):
-        self.ylimits[axis, index] = value
-        self._limiter()
-
-    def set_xlimit(self, index, value):
-        self.xlimits[index] = value
-        self._limiter()
-
-    def _limiter(self):
-        self.ax0.set_xlim(self.xlimits[0], self.xlimits[1])
-        self.ax0.set_ylim(self.ylimits[0,0], self.ylimits[0,1])
-        self.ax1.set_xlim(self.xlimits[0], self.xlimits[1])
-        self.ax1.set_ylim(self.ylimits[1,0], self.ylimits[1,1])
-
-    def _update_canvas(self, x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y):
-        x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y = np.array(x0X).copy(), np.array(x0Y).copy(), np.array(x1X).copy(), np.array(x1Y).copy(), np.array(y0X).copy(), np.array(y0Y).copy(), np.array(y1X).copy(), np.array(y1Y).copy()
-        self.line0X.set_data( x0X, y0X )
-        self.line1X.set_data( x1X, y1X )
-        self.line0Y.set_data( x0Y, y0Y )
-        self.line1Y.set_data( x1Y, y1Y )
-        if len(x0X) > 0:
-            self.dot0X.set_data( [x0X[-1]], [y0X[-1]] )
-        else:
-            self.dot0X.set_data( [], [] )
-        if len(x0Y) > 0:
-            self.dot0Y.set_data( [x0Y[-1]], [y0Y[-1]] )
-        else:
-            self.dot0Y.set_data( [], [] )
-        if len(x1X) > 0:
-            self.dot1X.set_data( [x1X[-1]], [y1X[-1]] )
-        else:
-            self.dot1X.set_data( [], [] )
-        if len(x1Y) > 0:
-            self.dot1Y.set_data( [x1Y[-1]], [y1Y[-1]] )
-        else:
-            self.dot1Y.set_data( [], [] )
-        if len(x0X) == len(y0X) and len(x1X) == len(y1X) and len(x0Y) == len(y0Y) and len(x1Y) == len(y1Y):
-            try:
-                time.sleep(.05)
-                self.draw()
-                time.sleep(.05)
-            except Exception as e:
-                print(e)
-                print(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
-        return
-    
-    def _updateLastPoint(self, x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y):
-        self.dot0X.set_data( x0X, y0X )
-        self.dot1X.set_data( x1X, y1X )
-        self.dot0Y.set_data( x0Y, y0Y )
-        self.dot1Y.set_data( x1Y, y1Y )
-        self.draw()
-        return
-
-    def updateLastPoint(self, x0X = [], x0Y = [], x1X = [], x1Y = [], y0X = [], y0Y = [], y1X = [], y1Y = []):
-        self._updateLastPoint(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
-
-class PulsesearchCanvasXYdel(FigureCanvas):
-    def __init__(self, parent, xlabel = '', ylabel1 = '', ylabel2 = '', xlimits = [-1,1], ylimits = np.array([[-1,1],[-1,1]])):
-        super().__init__(mpl.figure.Figure())
-        self.parent = parent
-
-        self.ax0 = self.figure.subplots()
-        self.ax0.set_ylabel(ylabel1, fontsize=20)
-        self.ax0.set_xlabel(xlabel, fontsize=20)
-        self.ax0.minorticks_on()
-        self.ax0.grid(which = 'major', color = 'yellow', linestyle = '--', linewidth = 0.5)
-        self.ax0.grid(which = 'minor', color = 'yellow', linestyle = '--', linewidth = 0.25, alpha = .5)
-        self.ax0.set_facecolor((0,0,0))
-
-        self.xlimits = xlimits
-        self.ylimits = ylimits
-
-        self.ax1 = self.ax0.twinx()
-        self.ax1.spines.right.set_position(("axes", 1+.07*(0-1)))
-        self.ax1.tick_params(axis='y', labelsize = 7)
-        self.ax1.set_ylabel(ylabel2, fontsize=16)
-
-        self.line0X, = self.ax0.plot([], [], color = 'w', linewidth = 1)
-        self.line1X, = self.ax1.plot([], [], color = 'tab:red', linewidth = 1)
-        self.line0Y, = self.ax0.plot([], [], color = 'w', linewidth = 1, linestyle = 'dashed')
-        self.line1Y, = self.ax1.plot([], [], color = 'tab:red', linewidth = 1, linestyle = 'dashed')
-        self.dot0X, = self.ax0.plot([], [], ms = 7, color = 'c',marker = 'D',ls = '')
-        self.dot1X, = self.ax1.plot([], [], ms = 7, color = 'm',marker = 'D',ls = '')
-        self.dot0Y, = self.ax0.plot([], [], ms = 4, color = 'c',marker = 's',ls = '')
-        self.dot1Y, = self.ax1.plot([], [], ms = 4, color = 'm',marker = 's',ls = '')
-        return
-
-    def update_plot(self, x0X = [], x0Y = [], x1X = [], x1Y = [], y0X = [], y0Y = [], y1X = [], y1Y = []):
-        self._update_canvas(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
-
-    def set_ylimit(self, axis, index, value):
-        self.ylimits[axis, index] = value
-        self._limiter()
-
-    def set_xlimit(self, index, value):
-        self.xlimits[index] = value
-        self._limiter()
-
-    def _limiter(self):
-        self.ax0.set_xlim(self.xlimits[0], self.xlimits[1])
-        self.ax0.set_ylim(self.ylimits[0,0], self.ylimits[0,1])
-        self.ax1.set_xlim(self.xlimits[0], self.xlimits[1])
-        self.ax1.set_ylim(self.ylimits[1,0], self.ylimits[1,1])
-
-    def _update_canvas(self, x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y):
-        self.line0X.set_data( x0X, y0X )
-        self.line1X.set_data( x1X, y1X )
-        self.line0X.set_data( x0Y, y0Y )
-        self.line1X.set_data( x1Y, y1Y )
-        self.draw()
-        return
-    
-    def _updateLastPoint(self, x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y):
-        self.dot0X.set_data( x0X, y0X )
-        self.dot1X.set_data( x1X, y1X )
-        self.dot0Y.set_data( x0Y, y0Y )
-        self.dot1Y.set_data( x1Y, y1Y )
-        self.draw()
-        return
-
-    def updateLastPoint(self, x0X = [], x0Y = [], x1X = [], x1Y = [], y0X = [], y0Y = [], y1X = [], y1Y = []):
-        self._updateLastPoint(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
-
 
 class stageBoss():
     def __init__(self):
