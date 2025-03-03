@@ -739,6 +739,8 @@ class DLscanWindow(QtWidgets.QWidget):
             self.movingKeys = []
             subdir = ''
             self.stageBoss.clearAllChildren()
+            #print(self.stageBoss.stages)
+            #print(self.stageBoss.stageValues)
             for arg in args:
                 print(arg)
                 stage_key = arg['stage_key']
@@ -753,6 +755,8 @@ class DLscanWindow(QtWidgets.QWidget):
                     self.startPos = start
                 if arg['subdir']:
                     subdir = '\\{0:.1f}'.format(start)
+            #print(self.stageBoss.stages)
+            #print(self.stageBoss.stageValues)
             self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
             self.commandQueue.append(self._lambMill(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2]))
             self.commandQueue.append(self._lambMill(self._addWaitTime, 4.0))
