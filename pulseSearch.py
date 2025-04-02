@@ -100,17 +100,17 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.sWidgets['ESP1'] = {'sn':self.PB_sn0, 'sp':self.PB_sp0, 'sethome':self.PB_sethome0, 'returnhome':self.PB_returnhome0, 
                                 'mn':self.PB_mn0, 'mp':self.PB_mp0, 'link':self.CB_linkedstage0, 'ss':self.SB_ss0, 'si':self.SB_si0, 'multiplier':self.SB_multiplier0, 
                                 'pmm':self.LE_pmm0, 'home':self.LE_home0, 'stop':self.PB_stop0, 'updatefrequency':self.SB_updateFreq0, 'unitbox':self.CB_units0, 
-                                'xlead':self.RB_xAxis0, 'unitlabel':self.L_units0}
+                                'xlead':self.RB_xAxis0, 'unitlabel':self.L_units0, 'setabsolute':self.PB_setabsolute0, 'absolute':self.LE_absolute0, 'moveabsolute':self.PB_moveabsolute0}
             self.sWidgets['ESP2'] = {'sn':self.PB_sn1, 'sp':self.PB_sp1, 'sethome':self.PB_sethome1, 'returnhome':self.PB_returnhome1, 
                                 'mn':self.PB_mn1, 'mp':self.PB_mp1, 'link':self.CB_linkedstage1, 'ss':self.SB_ss1, 'si':self.SB_si1, 'multiplier':self.SB_multiplier1, 
                                 'pmm':self.LE_pmm1, 'home':self.LE_home1, 'stop':self.PB_stop1, 'updatefrequency':self.SB_updateFreq1, 'unitbox':self.CB_units1, 
-                                'xlead':self.RB_xAxis1, 'unitlabel':self.L_units1}
+                                'xlead':self.RB_xAxis1, 'unitlabel':self.L_units1, 'setabsolute':self.PB_setabsolute1, 'absolute':self.LE_absolute1, 'moveabsolute':self.PB_moveabsolute1}
             self.sWidgets['ESP3'] = {'sn':self.PB_sn2, 'sp':self.PB_sp2, 'sethome':self.PB_sethome2, 'returnhome':self.PB_returnhome2, 
                                 'mn':self.PB_mn2, 'mp':self.PB_mp2, 'link':self.CB_linkedstage2, 'ss':self.SB_ss2, 'si':self.SB_si2, 'multiplier':self.SB_multiplier2, 
                                 'pmm':self.LE_pmm2, 'home':self.LE_home2, 'stop':self.PB_stop2, 'updatefrequency':self.SB_updateFreq2, 'unitbox':self.CB_units2, 
-                                'xlead':self.RB_xAxis2, 'unitlabel':self.L_units2}
+                                'xlead':self.RB_xAxis2, 'unitlabel':self.L_units2, 'setabsolute':self.PB_setabsolute2, 'absolute':self.LE_absolute2, 'moveabsolute':self.PB_moveabsolute2}
             if False:
-                self.sWidgets['CONEX'] = {'sn':self.PB_sn3, 'sp':self.PB_sp3, 'sethome':self.PB_sethome3, 'returnhome':self.PB_returnhome3, 'mn':self.PB_mn3, 'mp':self.PB_mp3, 'link':self.CB_linkedstage3, 'ss':self.SB_ss3, 'si':self.SB_si3, 'multiplier':self.SB_multiplier3, 'pmm':self.LE_pmm3, 'home':self.LE_home3, 'stop':self.PB_stop3, 'updatefrequency':self.SB_updateFreq3, 'unitbox':self.CB_units3, 'xlead':self.RB_xAxis3, 'unitlabel':self.L_units3}
+                self.sWidgets['CONEX'] = {'sn':self.PB_sn3, 'sp':self.PB_sp3, 'sethome':self.PB_sethome3, 'returnhome':self.PB_returnhome3, 'mn':self.PB_mn3, 'mp':self.PB_mp3, 'link':self.CB_linkedstage3, 'ss':self.SB_ss3, 'si':self.SB_si3, 'multiplier':self.SB_multiplier3, 'pmm':self.LE_pmm3, 'home':self.LE_home3, 'stop':self.PB_stop3, 'updatefrequency':self.SB_updateFreq3, 'unitbox':self.CB_units3, 'xlead':self.RB_xAxis3, 'unitlabel':self.L_units3, 'setabsolute':self.PB_setabsolute3, 'absolute':self.LE_absolute3, 'moveabsolute':self.PB_moveabsolute3}
 
         if True:
             self.unitMod = 0.15
@@ -189,8 +189,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.sWidgets[stage_key]['mn'].clicked.connect(self._lambMill(self._move_stage_continuous, stage_key, -1))
             self.sWidgets[stage_key]['mp'].clicked.connect(self._lambMill(self._move_stage_continuous, stage_key, 1))
             self.sWidgets[stage_key]['stop'].clicked.connect(self._stop_stage_continuous)
-            self.sWidgets[stage_key]['sethome'].clicked.connect(self._lambMill(self._set_home, stage_key)) # finish
-            self.sWidgets[stage_key]['returnhome'].clicked.connect(self._lambMill(self._return_to_home, stage_key)) # finish
+            self.sWidgets[stage_key]['sethome'].clicked.connect(self._lambMill(self._set_home, stage_key))
+            self.sWidgets[stage_key]['returnhome'].clicked.connect(self._lambMill(self._return_to_home, stage_key))
             self.sWidgets[stage_key]['link'].addItems(keyList)
             self.sWidgets[stage_key]['link'].currentIndexChanged.connect(self._lambMill(self._set_stage_link, stage_key))
             self.sWidgets[stage_key]['multiplier'].valueChanged.connect(self._lambMill(self._set_stage_multiplier, stage_key))
@@ -198,6 +198,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.sWidgets[stage_key]['si'].valueChanged.connect(self._lambMill(self._set_stage_index, stage_key))
             self.sWidgets[stage_key]['updatefrequency'].valueChanged.connect(self._lambMill(self._set_stage_update_frequency, stage_key))
             self.sWidgets[stage_key]['xlead'].toggled.connect(self._lambMill(self._set_x_lead, stage_key))
+            self.sWidgets[stage_key]['setabsolute'].clicked.connect(self._lambMill(self._set_absolute, stage_key))
+            self.sWidgets[stage_key]['moveabsolute'].clicked.connect(self._lambMill(self._move_absolute, stage_key))
             #self.sWidgets[stage_key]['si'].setEnabled(False)
 
     def _connectInstruments(self):
@@ -321,6 +323,26 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 if link != 'None':
                     self._set_stage_link(stage_key)
 
+    def _set_absolute(self, stage_key):
+        try:
+            self.sWidgets[stage_key]['absolute'].setText(format(self.stageBoss.getStagePosition(stage_key), '.4f'))
+        except Exception as e:
+            print(e)
+    def _move_absolute(self, stage_key):
+        try:
+            absolutePos = float(self.sWidgets[stage_key]['absolute'].text())
+        except Exception as e:
+            print('Issue with absolute position, ', e)
+        self._move_stage_absolute(stage_key, absolutePos)
+
+    def _moveStageAbsolute(self, stage_key, position):
+        self.stageBoss.moveStageAbsolute(stage_key, position)
+        self.stageJustMoved = True
+    def _move_stage_absolute(self, stage_key, position):
+        self._addFunctionToQueue(self._moveStageAbsolute, stage_key, position)
+        if self.xLeadingStage == stage_key:
+            self._addFunctionToQueue(self._safetyCheckpoint, stage_key)
+            self._addFunctionToQueue(self.appendData)
 
     def _set_home(self, stage_key):
         try:
@@ -644,6 +666,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             stageSets[stage_key]['multiplier'] = stageVals['multiplier']
             stageSets[stage_key]['updatefrequency'] = stageVals['updatefrequency']
             stageSets[stage_key]['stageValues'] = stageVals.copy()
+            try:
+                stageSets[stage_key]['absolute'] = float(self.sWidgets[stage_key]['absolute'].text())
+            except:
+                stageSets[stage_key]['absolute'] = 0.0
         try:
             self.settings.setValue('stageSets', stageSets)
             self.settings.setValue('xlim0', self.SB_xlim0.value())
@@ -674,6 +700,10 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
                 self.sWidgets[stage_key]['si'].setValue(stageSets[stage_key]['si'])
                 self.sWidgets[stage_key]['multiplier'].setValue(stageSets[stage_key]['multiplier'])
                 self.sWidgets[stage_key]['updatefrequency'].setValue(stageSets[stage_key]['updatefrequency'])
+                try:
+                    self.sWidgets[stage_key]['absolute'].setText(format(stageSets[stage_key]['absolute'], '.4f'))
+                except:
+                    self.sWidgets[stage_key]['absolute'].setText(format(0.0, '.4f'))
             self.xLeadingStage = self.settings.value('xLeading')
             self.sWidgets[self.xLeadingStage]['xlead'].setChecked(True)
             self.SP_address1.setValue(int(self.settings.value('address1')))
