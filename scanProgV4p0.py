@@ -85,7 +85,7 @@ class DLscanWindow(QtWidgets.QWidget):
                              'stepsize':self.SB_stepSize, 'numsteps':self.SB_numSteps, 
                              'THzkey':self.CB_THzKey, 'gatekey':self.CB_gateKey, 'rotkey':self.CB_rotKey, 'rotposition':self.LE_rotCurrent,
                              'numrounds':self.SB_numRounds, 
-                             'round':self.LE_round, 'delay':self.LE_delay, 'scan':self.LE_scan, 'tempwait':self.scanningTemp,
+                             'round':self.LE_round, 'delay':self.LE_delay, 'scan':self.LE_scan,
                              'set2current':self.PB_set2current, 'scanmode':self.CB_scanMode,
                              'xkey':self.CB_xKey, 'xposition':self.LE_xPosCurrent, 'xsampposition':self.SB_xPosSample, 'xrefposition':self.SB_xPosReference, 
                              'ykey':self.CB_yKey, 'yposition':self.LE_yPosCurrent, 'ysampposition':self.SB_yPosSample, 'yrefposition':self.SB_yPosReference, 
@@ -287,6 +287,7 @@ class DLscanWindow(QtWidgets.QWidget):
         # get sensitivity, time constant, etc
         # y axis based on sensitivity
         # wait times based on time constant
+        self.LE_tempWait.setText('PLEASE')
         try:
             self.firstTime = True
             for key in self.lockins:
@@ -299,12 +300,14 @@ class DLscanWindow(QtWidgets.QWidget):
             self.parent.scanStart()
             if self.sWidgets['heatercontrol'].isChecked():
                 self.scanParseList = self._parseDelaysHeater()
+                self.delays, self.numScans = self.scanParseList[0]['delays'], self.scanParseList[0]['numScans']
+                print(self.scanParseList)
                 self.rotPositions = self._parseRotationPositions()
                 self.srPositions = self._parseSampRefPositions()
                 comments = self._buildComments()
                 self.heaterFilepath = self.sWidgets['heaterpath'].text()
                 self.hippo = HungryHungryHippo(self, self.delays, self.numScans, self.sWidgets['numrounds'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['path'].text(), self.sWidgets['filename'].text(), self.sWidgets['extension'].text(), self.sWidgets['startnum'].value(), comments)
-                self.scanList = self.buildScans(self.sWidgets['THzsetposition'].value(), self.sWidgets['THzsetpositionref'].value(), str(self.sWidgets['THzkey'].currentText()), self.sWidgets['gatesetposition'].value(), self.sWidgets['gatesetpositionref'].value(), str(self.sWidgets['gatekey'].currentText()), self.scanParseList, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), str(self.sWidgets['xkey'].currentText()), str(self.sWidgets['ykey'].currentText()), self.srPositions, typo = str(self.CB_scanType.currentText()), xUnit = str(self.sWidgets['xlogunit'].currentText()))
+                self.scanList = self.buildScansHeat(self.sWidgets['THzsetposition'].value(), self.sWidgets['THzsetpositionref'].value(), str(self.sWidgets['THzkey'].currentText()), self.sWidgets['gatesetposition'].value(), self.sWidgets['gatesetpositionref'].value(), str(self.sWidgets['gatekey'].currentText()), self.scanParseList, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), str(self.sWidgets['xkey'].currentText()), str(self.sWidgets['ykey'].currentText()), self.srPositions, typo = str(self.CB_scanType.currentText()), xUnit = str(self.sWidgets['xlogunit'].currentText()))
             else:
                 self.delays, self.numScans = self._parseDelays()
                 self.rotPositions = self._parseRotationPositions()
@@ -463,17 +466,21 @@ class DLscanWindow(QtWidgets.QWidget):
                 pass
 
     def _heaterSafetyCheckpoint(self, waitTime, startedNow = True):
+        self.waitTime = waitTime
         if startedNow:
             self.heaterWaitStart = time.monotonic()
             time.sleep(5)
-            self.commandQueue.insert(0, self._lambMill(self._heaterSafetyCheckpoint(waitTime, False)))
+            self.commandQueue.insert(0, self._lambMill(self._heaterSafetyCheckpoint, waitTime, False))
         else:
             if time.monotonic() - self.heaterWaitStart < waitTime:
-                time.sleep(10)
-                self.sWidgets['tempwait'].setText(format((waitTime - (time.monotonic() - self.heaterWaitStart))/60, '.2f'))
-                self.commandQueue.insert(0, self._lambMill(self._heaterSafetyCheckpoint(waitTime, False)))
+                time.sleep(5)
+                self.LE_tempWait.setText('{:0.2f}'.format((waitTime - (time.monotonic() - self.heaterWaitStart))/60))
+                print('time left: {:0.2f}'.format((waitTime - (time.monotonic() - self.heaterWaitStart))/60))
+                self.commandQueue.insert(0, self._lambMill(self._heaterSafetyCheckpoint, waitTime, False))
+                #self.commandQueue.insert(0, self._lambMill(self._update_temp_wait, (waitTime - (time.monotonic() - self.heaterWaitStart))/60))
             else:
-                self.sWidgets['tempwait'].setText(format(0.00, '.2f'))
+                self.LE_tempWait.setText('{:0.2f}'.format(0.00))
+                #self.commandQueue.insert(0, self._lambMill(self._update_temp_wait, 0.00))
                 pass
 
     def _changeTemperature(self, setTemp, heaterSetting):
@@ -505,7 +512,9 @@ class DLscanWindow(QtWidgets.QWidget):
         self.sWidgets['round'].setText(str(r))
         self.sWidgets['delay'].setText(format(self.delays[d], '.2f'))
         self.sWidgets['scan'].setText(str(s))
-            
+
+    def _update_temp_wait(self, wait):
+        self.LE_tempWait.setText('{:0.2f}'.format(wait))
 
     def buildScansHeat(self, THzStart, THzStartRef, THzKey, gateStart, gateStartRef, gateKey, scanParseList, stepsize, numSteps, prescan, numRounds, xKey, yKey, srPositions, typo = 'THz', xUnit = 'ps'):
         scanList = []
@@ -519,9 +528,7 @@ class DLscanWindow(QtWidgets.QWidget):
             for i in range(numRounds):
                 for scanControl in scanParseList:
                     delays = scanControl['delays']
-                    self.delays = delays
                     numScans = scanControl['numScans']
-                    self.numScans = numScans
                     heatCommands = scanControl['heater']
                     scanningTemp = heatCommands[-1][0]
                     if first:
@@ -542,7 +549,7 @@ class DLscanWindow(QtWidgets.QWidget):
                                     gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
                                     xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':'{:0.1f}K_'.format(scanningTemp)+dirnames[jj]}
                                     #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
-                                    print(i,j,jj,k, scanningTemp)
+                                    print(i,j,k, scanningTemp, delays[j])
                                     scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
                             else:
                                 k=0
@@ -552,15 +559,13 @@ class DLscanWindow(QtWidgets.QWidget):
                                 gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
                                 xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':'{:0.1f}K_'.format(scanningTemp)+dirnames[jj]}
                                 #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
-                                print(i,j,jj,k, scanningTemp)
+                                print(i,j,k, scanningTemp, delays[j])
                                 scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
         if typo == 'THz_2stage':
             for i in range(numRounds):
                 for scanControl in scanParseList:
                     delays = scanControl['delays']
-                    self.delays = delays
                     numScans = scanControl['numScans']
-                    self.numScans = numScans
                     heatCommands = scanControl['heater']
                     scanningTemp = heatCommands[-1][0]
                     if first:
@@ -576,8 +581,10 @@ class DLscanWindow(QtWidgets.QWidget):
                             THzKerby = {'stage_key':THzKey, 'start':THzStart - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
                             gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':'{:0.1f}K'.format(scanningTemp)}
                             #rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
-                            print(i,j,k, scanningTemp)
+                            print(i,j,k, scanningTemp, delays[j])
                             scanList.append( {'args':[THzKerby.copy(), gateKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
+        for item in scanList:
+            print(item)
         return scanList
 
     def buildScans(self, THzStart, THzStartRef, THzKey, gateStart, gateStartRef, gateKey, delays, numScans, stepsize, numSteps, prescan, numRounds, rotKey, rotPositions, xKey, yKey, srPositions, typo = 'THz', xUnit = 'ps'):
@@ -691,19 +698,24 @@ class DLscanWindow(QtWidgets.QWidget):
         self.commandQueue = []
         self.stageBoss.clearAllChildren()
         self.logActive = True
+        self.tempControl = False
         self.xlimit_change(self.plot, 0, 0)
         self.xlimit_change(self.plot, 1, self.sWidgets['numsteps'].value()*self.sWidgets['stepsize'].value()/.15/1000)
         if scanType == 'temperatureControl':
             print('changing temp')
+            self.tempControl = True
             self.logActive = False
             setTemp = args[0]
             heaterSetting = args[1]
             waitTime = args[2]
             delays = args[3]
+            self.delays = delays
             self.commandQueue.append(self._lambMill(self.hippo.setScanSettings, delays))
             self.commandQueue.append(self._lambMill(self._changeTemperature, setTemp, heaterSetting))
+            self.commandQueue.append(self.beginScan)
             self.commandQueue.append(self._lambMill(self._heaterSafetyCheckpoint, waitTime, True))
-        if scanType == 'POPV1':
+            self.commandQueue.append(self.stopScan)
+        elif scanType == 'POPV1':
             print('POP?')
             gateKerb = args[1].copy()
             THzKerb = args[0].copy()
@@ -749,7 +761,7 @@ class DLscanWindow(QtWidgets.QWidget):
                 self.commandQueue.append(self.appendData)
                 self.commandQueue.append(self.updatePlot)
             self.commandQueue.append(self.stopScan)
-        if scanType == 'POP':
+        elif scanType == 'POP':
             print('POP?')
             gateKerb = args[1].copy()
             THzKerb = args[0].copy()
@@ -1152,3 +1164,14 @@ class cuteWorker(QtCore.QObject):
     def run(self, x, y):
         self.plot.updateCanvas(x, y)
         self.plot._drawPlot()
+
+class Worker(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+    def __init__(self, parent, function):
+        super(Worker, self).__init__()
+        self.parent = parent
+        self.function = function
+        
+    def run(self):
+        self.function()
+        self.finished.emit()

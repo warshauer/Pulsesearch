@@ -134,8 +134,6 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.PB_clearQueue.clicked.connect(self._clearQueue)
         self.PB_clearChildren.clicked.connect(self._clear_all_children)
 
-        self.LE_heaterSettings
-
         self._sample_interval = 50
         self._timer = QtCore.QTimer()
         self._timer.setInterval(self._sample_interval) #msec

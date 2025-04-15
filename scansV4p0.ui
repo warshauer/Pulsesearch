@@ -1356,7 +1356,7 @@
               <string/>
              </property>
              <property name="placeholderText">
-              <string>if no heater: delay#1_#scans, delay#2_#scans, ...         if heater: [(set temp, wait time in min), (set temp, wait time in min):delay#1_#scans, delay#2_#scans],  [(set temp, heater setting, wait time in min), (set temp, heater setting, wait time in min):delay#1_#scans, delay#2_#scans]...</string>
+              <string>no heater: delay#1_#scans, ...   heater: [(temp, setting, wait time in min), (set temp, wait time in min):delay#1_#scans, delay#2_#scans],  [(set temp, heater setting, wait time in min), (set temp, heater setting, wait time in min):delay#1_#scans, delay#2_#scans]...</string>
              </property>
             </widget>
            </item>
@@ -1582,6 +1582,9 @@
                 <font>
                  <pointsize>10</pointsize>
                 </font>
+               </property>
+               <property name="text">
+                <string>Z:\DABL_scripts\LAKESHORE\HEATER.txt</string>
                </property>
               </widget>
              </item>
