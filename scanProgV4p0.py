@@ -85,12 +85,12 @@ class DLscanWindow(QtWidgets.QWidget):
                              'stepsize':self.SB_stepSize, 'numsteps':self.SB_numSteps, 
                              'THzkey':self.CB_THzKey, 'gatekey':self.CB_gateKey, 'rotkey':self.CB_rotKey, 'rotposition':self.LE_rotCurrent,
                              'numrounds':self.SB_numRounds, 
-                             'round':self.LE_round, 'delay':self.LE_delay, 'scan':self.LE_scan, 
+                             'round':self.LE_round, 'delay':self.LE_delay, 'scan':self.LE_scan, 'tempwait':self.scanningTemp,
                              'set2current':self.PB_set2current, 'scanmode':self.CB_scanMode,
                              'xkey':self.CB_xKey, 'xposition':self.LE_xPosCurrent, 'xsampposition':self.SB_xPosSample, 'xrefposition':self.SB_xPosReference, 
                              'ykey':self.CB_yKey, 'yposition':self.LE_yPosCurrent, 'ysampposition':self.SB_yPosSample, 'yrefposition':self.SB_yPosReference, 
                              'set2currentsamp':self.PB_set2currentSample, 'set2currentref':self.PB_set2currentReference,
-                             'xlogunit':self.CB_xLogUnit, 'updatepositions':self.PB_updatePositions}
+                             'xlogunit':self.CB_xLogUnit, 'updatepositions':self.PB_updatePositions, 'heatercontrol':self.CB_heaterControl, 'heaterpath':self.LE_heaterSettings}
 
 
             # why didn't this work in a for loop :(
@@ -280,7 +280,7 @@ class DLscanWindow(QtWidgets.QWidget):
 
 
     def _widgetEnable(self, bool):
-        for k in ['THzsetposition', 'gatesetposition', 'THzsetpositionref', 'gatesetpositionref', 'set2currentref', 'prescan', 'delays', 'start', 'comments', 'extension', 'startnum', 'numrounds', 'set2current', 'stepsize', 'filename', 'path', 'browse', 'numsteps', 'scanmode', 'xsampposition', 'ysampposition', 'xrefposition', 'yrefposition', 'updatepositions', 'THzkey', 'gatekey', 'rotkey', 'xkey', 'ykey', 'set2currentsamp', 'set2currentref', 'xlogunit']:
+        for k in ['THzsetposition', 'gatesetposition', 'THzsetpositionref', 'gatesetpositionref', 'set2currentref', 'prescan', 'delays', 'start', 'comments', 'extension', 'startnum', 'numrounds', 'set2current', 'stepsize', 'filename', 'path', 'browse', 'numsteps', 'scanmode', 'xsampposition', 'ysampposition', 'xrefposition', 'yrefposition', 'updatepositions', 'THzkey', 'gatekey', 'rotkey', 'xkey', 'ykey', 'set2currentsamp', 'set2currentref', 'xlogunit', 'heaterpath', 'heatercontrol']:
             self.sWidgets[k].setEnabled(bool)
 
     def _start(self):
@@ -297,12 +297,22 @@ class DLscanWindow(QtWidgets.QWidget):
             #self._sensitivityChange(2, self.lockins[2].get_sensitivity())
             #self.timeConstants[1] = self._timeConstantList[self.lockins[2].get_time_constant()]
             self.parent.scanStart()
-            self.delays, self.numScans = self._parseDelays()
-            self.rotPositions = self._parseRotationPositions()
-            self.srPositions = self._parseSampRefPositions()
-            comments = self._buildComments()
-            self.hippo = HungryHungryHippo(self, self.delays, self.numScans, self.sWidgets['numrounds'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['path'].text(), self.sWidgets['filename'].text(), self.sWidgets['extension'].text(), self.sWidgets['startnum'].value(), comments)
-            self.scanList = self.buildScans(self.sWidgets['THzsetposition'].value(), self.sWidgets['THzsetpositionref'].value(), str(self.sWidgets['THzkey'].currentText()), self.sWidgets['gatesetposition'].value(), self.sWidgets['gatesetpositionref'].value(), str(self.sWidgets['gatekey'].currentText()), self.delays, self.numScans, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), str(self.sWidgets['rotkey'].currentText()), self.rotPositions, str(self.sWidgets['xkey'].currentText()), str(self.sWidgets['ykey'].currentText()), self.srPositions, typo = str(self.CB_scanType.currentText()), xUnit = str(self.sWidgets['xlogunit'].currentText()))
+            if self.sWidgets['heatercontrol'].isChecked():
+                self.scanParseList = self._parseDelaysHeater()
+                self.rotPositions = self._parseRotationPositions()
+                self.srPositions = self._parseSampRefPositions()
+                comments = self._buildComments()
+                self.heaterFilepath = self.sWidgets['heaterpath'].text()
+                self.hippo = HungryHungryHippo(self, self.delays, self.numScans, self.sWidgets['numrounds'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['path'].text(), self.sWidgets['filename'].text(), self.sWidgets['extension'].text(), self.sWidgets['startnum'].value(), comments)
+                self.scanList = self.buildScans(self.sWidgets['THzsetposition'].value(), self.sWidgets['THzsetpositionref'].value(), str(self.sWidgets['THzkey'].currentText()), self.sWidgets['gatesetposition'].value(), self.sWidgets['gatesetpositionref'].value(), str(self.sWidgets['gatekey'].currentText()), self.scanParseList, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), str(self.sWidgets['xkey'].currentText()), str(self.sWidgets['ykey'].currentText()), self.srPositions, typo = str(self.CB_scanType.currentText()), xUnit = str(self.sWidgets['xlogunit'].currentText()))
+            else:
+                self.delays, self.numScans = self._parseDelays()
+                self.rotPositions = self._parseRotationPositions()
+                self.srPositions = self._parseSampRefPositions()
+                comments = self._buildComments()
+                self.heaterFilepath = self.sWidgets['heaterpath'].text()
+                self.hippo = HungryHungryHippo(self, self.delays, self.numScans, self.sWidgets['numrounds'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['path'].text(), self.sWidgets['filename'].text(), self.sWidgets['extension'].text(), self.sWidgets['startnum'].value(), comments)
+                self.scanList = self.buildScans(self.sWidgets['THzsetposition'].value(), self.sWidgets['THzsetpositionref'].value(), str(self.sWidgets['THzkey'].currentText()), self.sWidgets['gatesetposition'].value(), self.sWidgets['gatesetpositionref'].value(), str(self.sWidgets['gatekey'].currentText()), self.delays, self.numScans, self.sWidgets['stepsize'].value(), self.sWidgets['numsteps'].value(), self.sWidgets['prescan'].value(), self.sWidgets['numrounds'].value(), str(self.sWidgets['rotkey'].currentText()), self.rotPositions, str(self.sWidgets['xkey'].currentText()), str(self.sWidgets['ykey'].currentText()), self.srPositions, typo = str(self.CB_scanType.currentText()), xUnit = str(self.sWidgets['xlogunit'].currentText()))
             print('scanList created')
             self.xlimit_change(self.plot, 0, 0)
             self.xlimit_change(self.plot, 1, self.sWidgets['numsteps'].value()*self.sWidgets['stepsize'].value()/.15/1000)
@@ -367,6 +377,25 @@ class DLscanWindow(QtWidgets.QWidget):
             numScans.append(int(item.split('_')[1]))
         print(delays, numScans)
         return delays, numScans
+    
+    def _parseDelaysHeater(self):
+        text = self.sWidgets['delays'].toPlainText()
+        tl = text.split('], ')
+        scanParseList = []
+        for item in tl:
+            atTemp = item.strip('][ ').split(':')
+            thisHeatCommand = atTemp[0].split('), ')
+            heaterCommand = []
+            for heatCom in thisHeatCommand:
+                yessir = heatCom.strip('()').split(', ')
+                heaterCommand.append([float(yessir[0]), int(yessir[1]), float(yessir[2])*60])
+            delays = []
+            numScans = []
+            for scanStuff in atTemp[1].split(', '):
+                delays.append(float(scanStuff.split('_')[0]))
+                numScans.append(int(scanStuff.split('_')[1]))
+            scanParseList.append({'delays':delays, 'numScans':numScans, 'heater':heaterCommand})
+        return scanParseList
     
     def _parseRotationPositions(self):
         text = self.LE_rotPos.text()
@@ -433,6 +462,42 @@ class DLscanWindow(QtWidgets.QWidget):
             else:
                 pass
 
+    def _heaterSafetyCheckpoint(self, waitTime, startedNow = True):
+        if startedNow:
+            self.heaterWaitStart = time.monotonic()
+            time.sleep(5)
+            self.commandQueue.insert(0, self._lambMill(self._heaterSafetyCheckpoint(waitTime, False)))
+        else:
+            if time.monotonic() - self.heaterWaitStart < waitTime:
+                time.sleep(10)
+                self.sWidgets['tempwait'].setText(format((waitTime - (time.monotonic() - self.heaterWaitStart))/60, '.2f'))
+                self.commandQueue.insert(0, self._lambMill(self._heaterSafetyCheckpoint(waitTime, False)))
+            else:
+                self.sWidgets['tempwait'].setText(format(0.00, '.2f'))
+                pass
+
+    def _changeTemperature(self, setTemp, heaterSetting):
+        self.adjustHeater(setTemp, heaterSetting)
+
+    def adjustHeater(self, setTemp, heaterSetting):
+        filepath = self.heaterFilepath
+        try:
+            with open(filepath, 'r') as file:
+                content = file.readlines()
+
+            if content:
+                with open(filepath, 'w') as file:
+                    file.write(r'{"A": {"HEAT_RANGE": ' + str(heaterSetting) + r', "SETPOINT": ' + '{:0.2f}'.format(setTemp) + r'} }' + '\n')
+                    file.writelines(content[1:])
+            else:
+                with open(filepath, 'w') as file:
+                    file.write(r'{"A": {"HEAT_RANGE": ' + str(heaterSetting) + r', "SETPOINT": ' + '{:0.2f}'.format(setTemp) + r'} }' + '\n')
+                    
+        except FileNotFoundError:
+            print(f"Error: File not found at {filepath}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     def _lambMill(self, func, *args, **kwargs):
         return lambda:func(*args, **kwargs)
 
@@ -441,6 +506,79 @@ class DLscanWindow(QtWidgets.QWidget):
         self.sWidgets['delay'].setText(format(self.delays[d], '.2f'))
         self.sWidgets['scan'].setText(str(s))
             
+
+    def buildScansHeat(self, THzStart, THzStartRef, THzKey, gateStart, gateStartRef, gateKey, scanParseList, stepsize, numSteps, prescan, numRounds, xKey, yKey, srPositions, typo = 'THz', xUnit = 'ps'):
+        scanList = []
+        self.logUnit = xUnit
+        print(typo)
+        THzPositions = [THzStart, THzStartRef]
+        gatePositions = [gateStart, gateStartRef]
+        first = True
+        if typo == 'THz_equ':
+            dirnames = ['samp', 'ref']
+            for i in range(numRounds):
+                for scanControl in scanParseList:
+                    delays = scanControl['delays']
+                    self.delays = delays
+                    numScans = scanControl['numScans']
+                    self.numScans = numScans
+                    heatCommands = scanControl['heater']
+                    scanningTemp = heatCommands[-1][0]
+                    if first:
+                        first = False
+                    else:
+                        for hcom in heatCommands:
+                            setTemp = hcom[0]
+                            heaterSetting = hcom[1]
+                            waitTime = hcom[2]
+                            scanList.append( {'args':[setTemp, heaterSetting, waitTime, delays], 'numSteps':numSteps, 'RDS':None, 'scanType':'temperatureControl'} )
+                    for j in range(len(delays)):
+                        for jj in range(len(srPositions)):
+                            if jj == 0:
+                                for k in range(numScans[j]):
+                                    startPosTHz = THzPositions[jj]
+                                    startPosGate = gatePositions[jj]
+                                    THzKerby = {'stage_key':THzKey, 'start':startPosTHz - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False, 'subdirname':None}
+                                    gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
+                                    xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':'{:0.1f}K_'.format(scanningTemp)+dirnames[jj]}
+                                    #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
+                                    print(i,j,jj,k, scanningTemp)
+                                    scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
+                            else:
+                                k=0
+                                startPosTHz = THzPositions[jj]
+                                startPosGate = gatePositions[jj]
+                                THzKerby = {'stage_key':THzKey, 'start':startPosTHz - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False, 'subdirname':None}
+                                gateKerby = {'stage_key':gateKey, 'start':startPosGate - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':False, 'subdirname':None}
+                                xKerby = {'stage_key':xKey, 'start':srPositions[jj][0], 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':'{:0.1f}K_'.format(scanningTemp)+dirnames[jj]}
+                                #yKerby = {'stage_key':yKey, 'start':srPositions[jj][1], 'moving':False, 'stepsize':0, 'subdir':False}
+                                print(i,j,jj,k, scanningTemp)
+                                scanList.append( {'args':[THzKerby.copy(), gateKerby.copy(), xKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'sample-reference'} )
+        if typo == 'THz_2stage':
+            for i in range(numRounds):
+                for scanControl in scanParseList:
+                    delays = scanControl['delays']
+                    self.delays = delays
+                    numScans = scanControl['numScans']
+                    self.numScans = numScans
+                    heatCommands = scanControl['heater']
+                    scanningTemp = heatCommands[-1][0]
+                    if first:
+                        first = False
+                    else:
+                        for hcom in heatCommands:
+                            setTemp = hcom[0]
+                            heaterSetting = hcom[1]
+                            waitTime = hcom[2]
+                            scanList.append( {'args':[setTemp, heaterSetting, waitTime, delays], 'numSteps':numSteps, 'RDS':None, 'scanType':'temperatureControl'} )
+                    for j in range(len(delays)):
+                        for k in range(numScans[j]):
+                            THzKerby = {'stage_key':THzKey, 'start':THzStart - prescan - delays[j]*0.15, 'moving':True, 'stepsize':stepsize, 'subdir':False}
+                            gateKerby = {'stage_key':gateKey, 'start':gateStart - delays[j]*0.15, 'moving':False, 'stepsize':0, 'subdir':True, 'subdirname':'{:0.1f}K'.format(scanningTemp)}
+                            #rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
+                            print(i,j,k, scanningTemp)
+                            scanList.append( {'args':[THzKerby.copy(), gateKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
+        return scanList
 
     def buildScans(self, THzStart, THzStartRef, THzKey, gateStart, gateStartRef, gateKey, delays, numScans, stepsize, numSteps, prescan, numRounds, rotKey, rotPositions, xKey, yKey, srPositions, typo = 'THz', xUnit = 'ps'):
         scanList = []
@@ -555,6 +693,16 @@ class DLscanWindow(QtWidgets.QWidget):
         self.logActive = True
         self.xlimit_change(self.plot, 0, 0)
         self.xlimit_change(self.plot, 1, self.sWidgets['numsteps'].value()*self.sWidgets['stepsize'].value()/.15/1000)
+        if scanType == 'temperatureControl':
+            print('changing temp')
+            self.logActive = False
+            setTemp = args[0]
+            heaterSetting = args[1]
+            waitTime = args[2]
+            delays = args[3]
+            self.commandQueue.append(self._lambMill(self.hippo.setScanSettings, delays))
+            self.commandQueue.append(self._lambMill(self._changeTemperature, setTemp, heaterSetting))
+            self.commandQueue.append(self._lambMill(self._heaterSafetyCheckpoint, waitTime, True))
         if scanType == 'POPV1':
             print('POP?')
             gateKerb = args[1].copy()
@@ -954,6 +1102,9 @@ class HungryHungryHippo():
         commentFile.write(comments)
         commentFile.close()
 
+    def setScanSettings(self, delays):
+        self.delays = delays
+
     def startFile(self, subdir = '', r = None, d = None, s = None):
         self.wto = self.openFile(comment = False, subdir = subdir, r = r, d = d, s = s)
         self.x = []
@@ -990,94 +1141,6 @@ class HungryHungryHippo():
             self.wto.close()
         except:
             print('no file to close')
-
-class HungryMeasuring():
-    def __init__(self, parent, delays, scanperround, numrounds, numsteps, path, filename, extension, startnum, comments):
-        self.parent = parent
-        self.delays = delays
-        self.scanPerRound = scanperround
-        self.numRounds = numrounds
-        self.numSteps = numsteps
-        self.path = path
-        self.filename = filename
-        self.extension = extension
-        self.startnum = startnum
-        self.di = 0
-        self.si = 0
-        self.ri = 0
-        self.commentFile = self.openFile(comment = True)
-        self.commentFile.write(comments)
-        self.commentFile.close()
-        self.newScan()
-
-    def newScan(self):
-        self.delay = self.delays[self.di]
-        self.numScans = self.scanPerRound[self.di]
-        self.wto = self.openFile()
-        self.x = []
-        self.y0 = []
-        self.y1 = []
-
-    def feedData(self, x, y0, y1):
-        self.x.append(x)
-        self.y0.append(y0)
-        self.y1.append(y1)
-        self.wto.write(format(x, '.4f') + ' ' + format(y0, '.4f') + ' ' + format(y1, '.4f') + '\n')
-        if len(self.x) == self.numSteps:
-            self.toSend.append(max(self.y0))
-            self.wto.close()
-            self.si += 1
-            if self.si >= self.numScans:
-                try:
-                    #self.sms.send(' scans done: ' + format(sum(self.toSend)/len(self.toSend), '.4f'), self.number)
-                    self.toSendAvgs.append(sum(self.toSend)/len(self.toSend))
-                    self.toSend = []
-                except:
-                    pass
-                self.di += 1
-                self.si = 0
-                if self.di >= len(self.delays):
-                    try:
-                        strtr = ''
-                        for avg in self.toSendAvgs:
-                            strtr = strtr + ' ' + format(avg, '.3f')
-                        self.sms.send(' round done: ' + strtr, self.number)
-                        self.toSendAvgs = []
-                    except:
-                        pass
-                    self.di = 0
-                    self.ri += 1
-                    if self.ri >= self.numRounds:
-                        self.parent.stop()
-            self.newScan()
-            return True, self.delays[self.di], self.di, self.si, self.ri
-        else:
-            return False, self.delays[self.di], self.di, self.si, self.ri
-
-    def openFile(self, comment = False):
-        if comment:
-            fn = self.path + '//' + self.filename+'_comments'
-        else:
-            fn = self.path + '//' + self.filename+'_('+str(self.delays[self.di])+'_'+str(self.di)+'_'+str(self.ri)+'_'+str(self.si)+')_'
-        i=0
-        while os.path.exists(fn+self.extension):
-            fn = fn + '_fs'+str(i)
-            i+=1
-        return open(fn + self.extension, 'w')
-    
-    def closeFile(self):
-        self.wto.close()
-
-class Worker(QtCore.QObject):
-    finished = QtCore.pyqtSignal()
-    def __init__(self, parent, function):
-        super(Worker, self).__init__()
-        self.parent = parent
-        self.function = function
-        
-    def run(self):
-        self.function()
-        self.finished.emit()
 
 class cuteWorker(QtCore.QObject):
     finished = QtCore.pyqtSignal()

@@ -401,6 +401,42 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="LE_round">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_30">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Round:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_28">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Scan:</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="LE_delay">
            <property name="font">
@@ -425,20 +461,8 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_28">
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Scan:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLabel" name="LE_round">
+         <item row="1" column="3">
+          <widget class="QLabel" name="LE_tempWait">
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -449,15 +473,15 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="label_30">
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_40">
            <property name="font">
             <font>
              <pointsize>12</pointsize>
             </font>
            </property>
            <property name="text">
-            <string>Round:</string>
+            <string>tempWait(min):</string>
            </property>
           </widget>
          </item>
@@ -1271,16 +1295,55 @@
             <number>4</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_10">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="spacing">
+              <number>4</number>
              </property>
-             <property name="text">
-              <string>Delays:</string>
+             <property name="leftMargin">
+              <number>4</number>
              </property>
-            </widget>
+             <property name="topMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>4</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_10">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Delays:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="CB_heaterControl">
+               <property name="text">
+                <string>Heater Control</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <widget class="QPlainTextEdit" name="TE_delays">
@@ -1290,7 +1353,10 @@
               </font>
              </property>
              <property name="plainText">
-              <string>0_3, 1_3</string>
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>if no heater: delay#1_#scans, delay#2_#scans, ...         if heater: [(set temp, wait time in min), (set temp, wait time in min):delay#1_#scans, delay#2_#scans],  [(set temp, heater setting, wait time in min), (set temp, heater setting, wait time in min):delay#1_#scans, delay#2_#scans]...</string>
              </property>
             </widget>
            </item>
@@ -1476,6 +1542,46 @@
                </property>
                <property name="text">
                 <string>Set (Reference X,Y)</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="topMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>4</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>heaterPath:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="LE_heaterSettings">
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
                </property>
               </widget>
              </item>

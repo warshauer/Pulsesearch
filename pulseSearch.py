@@ -134,6 +134,8 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
         self.PB_clearQueue.clicked.connect(self._clearQueue)
         self.PB_clearChildren.clicked.connect(self._clear_all_children)
 
+        self.LE_heaterSettings
+
         self._sample_interval = 50
         self._timer = QtCore.QTimer()
         self._timer.setInterval(self._sample_interval) #msec
@@ -816,6 +818,7 @@ class pulsesearchWindow(QtWidgets.QMainWindow):
             self.rtList2.append(loopTime)
             self.rtList2.pop(0)
             self.LE_speedAvg2.setText(format(np.average(self.rtList2), '.2f'))
+
 
 class quickFFTWindow(QtWidgets.QWidget):
     def __init__(self, parent):
