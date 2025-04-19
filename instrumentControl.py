@@ -22,7 +22,7 @@ class motionController():
 
 
 class esp301_GPIB():
-    def __init__(self, port, baud_rate = 19200, timeout = 2000): #baud rate is unused, I just kept it for consistency with the usb class, but it can be removed
+    def __init__(self, port, baud_rate = 19200, timeout = 5000): #baud rate is unused, I just kept it for consistency with the usb class, but it can be removed
         self.rm = pyvisa.ResourceManager()
         print(self.rm.list_resources())
         self.port = port
@@ -40,20 +40,22 @@ class esp301_GPIB():
         try:
             self.instrument.write(str(param1) + ascii_cmd + ','.join(list(map(lambda x: str(x), param2))) )
         except:
+            time.sleep(2)
             self.instrument.clear()
             self.instrument.close()
             self._configure_instrument('GPIB::' + str(self.port) + '::INSTR')
-            time.sleep(.5)
+            print('com:', ascii_cmd)
             self.instrument.write(str(param1) + ascii_cmd + ','.join(list(map(lambda x: str(x), param2))) )
 
     def query_command(self, ascii_cmd, param1 = '', param2 = []):
         try:
             return self.instrument.query(str(param1) + ascii_cmd + '?' + ','.join(list(map(lambda x: str(x), param2))) )
         except:
+            time.sleep(2)
             self.instrument.clear()
             self.instrument.close()
             self._configure_instrument('GPIB::' + str(self.port) + '::INSTR')
-            time.sleep(1)
+            print('com:', ascii_cmd)
             return self.instrument.query(str(param1) + ascii_cmd + '?' + ','.join(list(map(lambda x: str(x), param2))) )
 
     #Initializing functions
@@ -158,6 +160,31 @@ class sr830():
         data = []
         for i in range(num_data_points):
             v = self.query_command('OUTP', [1]) 
+            try:
+                v = float(v.strip('\n')) * self.get_input_config_scaling_factor() * self.get_sensitivity_scaling_factor()
+            except:
+                pass
+            if (type(v) == float):
+                data.append(v)
+        if (len(data) > 0):
+            return sum(data)/len(data)
+        elif data == []:
+            return 0.0
+        else:
+            return data[0]
+        
+    def get_specific_output(self, output, num_data_points = 1):
+        if output == 'Y':
+            ask = 2
+        elif output == 'R':
+            ask = 3
+        elif output == 'theta':
+            ask = 4
+        else:
+            ask = 1
+        data = []
+        for i in range(num_data_points):
+            v = self.query_command('OUTP', [ask]) 
             try:
                 v = float(v.strip('\n')) * self.get_input_config_scaling_factor() * self.get_sensitivity_scaling_factor()
             except:
@@ -280,7 +307,7 @@ class esp301_GPIB2():
         self.instrument.close()
 
 class CONEX():
-    def __init__(self, port, baud_rate = 19200, timeout = 2000): #baud rate is unused, I just kept it for consistency with the usb class, but it can be removed
+    def __init__(self, port, baud_rate = 19200, timeout = 2000): # baud rate is unused, I just kept it for consistency with the usb class, but it can be removed
         self.rm = pyvisa.ResourceManager()
         print(self.rm.list_resources())
         self.port = port

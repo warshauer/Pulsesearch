@@ -368,6 +368,73 @@ class PulsesearchCanvas(FigureCanvas):
     def updateLastPoint(self, x0 = [], x1 = [], y0 = [], y1 = []):
         self._updateLastPoint(x0, x1, y0, y1)
 
+class PulsesearchCanvasXY(FigureCanvas):
+    def __init__(self, parent, xlabel = '', ylabel1 = '', ylabel2 = '', xlimits = [-1,1], ylimits = np.array([[-1,1],[-1,1]])):
+        super().__init__(mpl.figure.Figure())
+        self.parent = parent
+
+        self.ax0 = self.figure.subplots()
+        self.ax0.set_ylabel(ylabel1, fontsize=20)
+        self.ax0.set_xlabel(xlabel, fontsize=20)
+        self.ax0.minorticks_on()
+        self.ax0.grid(which = 'major', color = 'yellow', linestyle = '--', linewidth = 0.5)
+        self.ax0.grid(which = 'minor', color = 'yellow', linestyle = '--', linewidth = 0.25, alpha = .5)
+        self.ax0.set_facecolor((0,0,0))
+
+        self.xlimits = xlimits
+        self.ylimits = ylimits
+
+        self.ax1 = self.ax0.twinx()
+        self.ax1.spines.right.set_position(("axes", 1+.07*(0-1)))
+        self.ax1.tick_params(axis='y', labelsize = 7)
+        self.ax1.set_ylabel(ylabel2, fontsize=16)
+
+        self.line0X, = self.ax0.plot([], [], color = 'w', linewidth = 1)
+        self.line1X, = self.ax1.plot([], [], color = 'tab:red', linewidth = 1)
+        self.line0Y, = self.ax0.plot([], [], color = 'w', linewidth = 1, linestyle = 'dashed')
+        self.line1Y, = self.ax1.plot([], [], color = 'tab:red', linewidth = 1, linestyle = 'dashed')
+        self.dot0X, = self.ax0.plot([], [], ms = 7, color = 'c',marker = 'D',ls = '')
+        self.dot1X, = self.ax1.plot([], [], ms = 7, color = 'm',marker = 'D',ls = '')
+        self.dot0Y, = self.ax0.plot([], [], ms = 4, color = 'c',marker = 's',ls = '')
+        self.dot1Y, = self.ax1.plot([], [], ms = 4, color = 'm',marker = 's',ls = '')
+        return
+
+    def update_plot(self, x0X = [], x0Y = [], x1X = [], x1Y = [], y0X = [], y0Y = [], y1X = [], y1Y = []):
+        self._update_canvas(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
+
+    def set_ylimit(self, axis, index, value):
+        self.ylimits[axis, index] = value
+        self._limiter()
+
+    def set_xlimit(self, index, value):
+        self.xlimits[index] = value
+        self._limiter()
+
+    def _limiter(self):
+        self.ax0.set_xlim(self.xlimits[0], self.xlimits[1])
+        self.ax0.set_ylim(self.ylimits[0,0], self.ylimits[0,1])
+        self.ax1.set_xlim(self.xlimits[0], self.xlimits[1])
+        self.ax1.set_ylim(self.ylimits[1,0], self.ylimits[1,1])
+
+    def _update_canvas(self, x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y):
+        self.line0X.set_data( x0X, y0X )
+        self.line1X.set_data( x1X, y1X )
+        self.line0X.set_data( x0Y, y0Y )
+        self.line1X.set_data( x1Y, y1Y )
+        self.draw()
+        return
+    
+    def _updateLastPoint(self, x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y):
+        self.dot0X.set_data( x0X, y0X )
+        self.dot1X.set_data( x1X, y1X )
+        self.dot0Y.set_data( x0Y, y0Y )
+        self.dot1Y.set_data( x1Y, y1Y )
+        self.draw()
+        return
+
+    def updateLastPoint(self, x0X = [], x0Y = [], x1X = [], x1Y = [], y0X = [], y0Y = [], y1X = [], y1Y = []):
+        self._updateLastPoint(x0X, x0Y, x1X, x1Y, y0X, y0Y, y1X, y1Y)
+
 class plotCanvasDL(FigureCanvas):
     def __init__(self, parent, xlabel = '', ylabel = '', autolim = True , xlimits = [0, 150], ylimits = [0, 300], windowlength = 0, plot_dict = None, line_dict = None, last_point = False):
         super().__init__(mpl.figure.Figure())
