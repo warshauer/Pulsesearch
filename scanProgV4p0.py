@@ -1,19 +1,11 @@
-import numpy as np
 import os
 import sys
 import matplotlib
 matplotlib.use('Qt5Agg')
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-import matplotlib.ticker as ticker
 import numpy as np
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets
 from PyQt5 import uic
-from PyQt5.QtCore import pyqtSlot
 import appClasses as dd
-#import qt5_controller as qc
-#from flowControllerClasses import Flowmeter
-from instrumentControl import esp301_GPIB, sr830
 import time
 
 class DLscanWindow(QtWidgets.QWidget):
@@ -284,19 +276,11 @@ class DLscanWindow(QtWidgets.QWidget):
             self.sWidgets[k].setEnabled(bool)
 
     def _start(self):
-        # get sensitivity, time constant, etc
-        # y axis based on sensitivity
-        # wait times based on time constant
-        self.LE_tempWait.setText('PLEASE')
         try:
             self.firstTime = True
             for key in self.lockins:
                 self._sensitivityChange(key, self.lockins[key].get_sensitivity())
                 self.timeConstants[key-1] = self._timeConstantList[self.lockins[key].get_time_constant()]
-            #self._sensitivityChange(1, self.lockins[1].get_sensitivity())
-            #self.timeConstants[0] = self._timeConstantList[self.lockins[1].get_time_constant()]
-            #self._sensitivityChange(2, self.lockins[2].get_sensitivity())
-            #self.timeConstants[1] = self._timeConstantList[self.lockins[2].get_time_constant()]
             self.parent.scanStart()
             if self.sWidgets['heatercontrol'].isChecked():
                 self.scanParseList = self._parseDelaysHeater()
@@ -421,12 +405,6 @@ class DLscanWindow(QtWidgets.QWidget):
         self.started = False
         self.hippo.closeFile()
         self.parent.scanEnd()
-
-    def updatePlot(self):
-        try:
-            self.cutie.run(np.array(self.x), self.y)
-        except Exception as e:
-            print(e)
 
     def updatePlot2(self):
         self.plot.update_plot(np.array(self.x), self.y)
@@ -583,8 +561,6 @@ class DLscanWindow(QtWidgets.QWidget):
                             #rotKerby = {'stage_key':rotKey, 'start':rotPos, 'moving':False, 'stepsize':0, 'subdir':True}
                             print(i,j,k, scanningTemp, delays[j])
                             scanList.append( {'args':[THzKerby.copy(), gateKerby.copy()], 'numSteps':numSteps, 'RDS':[i,j,k], 'scanType':'norm'} )
-        for item in scanList:
-            print(item)
         return scanList
 
     def buildScans(self, THzStart, THzStartRef, THzKey, gateStart, gateStartRef, gateKey, delays, numScans, stepsize, numSteps, prescan, numRounds, rotKey, rotPositions, xKey, yKey, srPositions, typo = 'THz', xUnit = 'ps'):
@@ -1000,16 +976,6 @@ class DLscanWindow(QtWidgets.QWidget):
         else:
             if not type(event) == bool:
                 event.ignore()
-
-    def send_sms_update(self, t, temps):
-        stringer = ''
-        for key in temps:
-            stringer = stringer + str(key) + ': ' + format(temps[key], '.2f') + ' K\n'
-        self.sms.send(stringer, self.LE_phonenumber.text())
-
-    def ttest(self, label = ''):
-        t = time.monotonic()
-        print(t - self.tt, label)
 
     def _recallStageKeys(self):
         try:

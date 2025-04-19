@@ -7,6 +7,8 @@ import pulseSearch as ps
 '''
 To add an instrument application, just import the QMainWindow class, create the instance in runApp(), pass that instance into the managerWindow list.
 In the QMainWindow class, give the attribute 'me' (ex. self.me = 'pulsesearch'), this will be drawn from by the manager window.
+
+For now, we will just be using the pulse search application, but this is a good template for future applications. Until we add back something such as the Lakeshore control, we will just be using this.
 '''
 def runApp():
     app = QtWidgets.QApplication(sys.argv)

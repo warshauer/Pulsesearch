@@ -38,36 +38,23 @@ class esp301_GPIB():
 
     def write_command(self, ascii_cmd, param1 = '', param2 = []):
         try:
-            time.sleep(0.05)
             self.instrument.write(str(param1) + ascii_cmd + ','.join(list(map(lambda x: str(x), param2))) )
         except:
             time.sleep(2)
-            print('wp1')
             self.instrument.clear()
-            print('wp2')
             self.instrument.close()
-            print('wp3')
             self._configure_instrument('GPIB::' + str(self.port) + '::INSTR')
-            print('wp4')
-            time.sleep(2)
             print('com:', ascii_cmd)
             self.instrument.write(str(param1) + ascii_cmd + ','.join(list(map(lambda x: str(x), param2))) )
-            print('wp5')
 
     def query_command(self, ascii_cmd, param1 = '', param2 = []):
         try:
-            time.sleep(0.05)
             return self.instrument.query(str(param1) + ascii_cmd + '?' + ','.join(list(map(lambda x: str(x), param2))) )
         except:
             time.sleep(2)
-            print('qp1')
             self.instrument.clear()
-            print('qp2')
             self.instrument.close()
-            print('qp3')
             self._configure_instrument('GPIB::' + str(self.port) + '::INSTR')
-            print('qp4')
-            time.sleep(2)
             print('com:', ascii_cmd)
             return self.instrument.query(str(param1) + ascii_cmd + '?' + ','.join(list(map(lambda x: str(x), param2))) )
 
@@ -320,7 +307,7 @@ class esp301_GPIB2():
         self.instrument.close()
 
 class CONEX():
-    def __init__(self, port, baud_rate = 19200, timeout = 2000): #baud rate is unused, I just kept it for consistency with the usb class, but it can be removed
+    def __init__(self, port, baud_rate = 19200, timeout = 2000): # baud rate is unused, I just kept it for consistency with the usb class, but it can be removed
         self.rm = pyvisa.ResourceManager()
         print(self.rm.list_resources())
         self.port = port
