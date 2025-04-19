@@ -220,7 +220,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Rot:</string>
+            <string>rot:</string>
            </property>
           </widget>
          </item>

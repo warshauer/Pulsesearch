@@ -46,7 +46,7 @@
         </font>
        </property>
        <property name="text">
-        <string>browse</string>
+        <string>Browse</string>
        </property>
       </widget>
      </item>
@@ -75,7 +75,7 @@
         </font>
        </property>
        <property name="text">
-        <string>save</string>
+        <string>Save</string>
        </property>
       </widget>
      </item>

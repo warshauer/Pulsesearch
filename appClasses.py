@@ -18,6 +18,12 @@ from datetime import datetime
 import matplotlib.animation as anim
 import time
 
+"""
+This file contains the classes used in the GUI. It is divided into several sections:
+1. Spoof Instrument classes: These are classes that are used to immitate instruments when testing outside the lab.
+2. Plotting classes: These are classes that are used to create the plots in the GUI.
+"""
+
 # general live plot
 # general logfileManager
 # general instrument spoof
