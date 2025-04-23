@@ -744,14 +744,6 @@ class DLscanWindow(QtWidgets.QWidget):
             gate_key = gateKerb['stage_key']
             THz_key = THzKerb['stage_key']
             self.movingKeys = [THz_key, gate_key]
-            #rotKerb = args[2].copy()
-            #stage_key = rotKerb['stage_key']
-            #start_position = rotKerb['start']
-            #self.commandQueue.append(self._lambMill(self._moveStageAbsolute, stage_key = stage_key, position = start_position))
-            #self.commandQueue.append(self._lambMill(self._safetyCheckpoint, stage_key, bonusMod = 2.0, sleepTime = 0.2))
-            #self.commandQueue.append(self._lambMill(self._update_stage_position, stage_key))
-            #if rotKerb['subdir']:
-            #        subdir = '\\{0:.1f}'.format(start_position)
             gateKerb = args[1].copy()
             gate_key = gateKerb['stage_key']
             start_position = gateKerb['start']
@@ -875,8 +867,6 @@ class DLscanWindow(QtWidgets.QWidget):
             self.movingKeys = []
             subdir = ''
             self.stageBoss.clearAllChildren()
-            #print(self.stageBoss.stages)
-            #print(self.stageBoss.stageValues)
             for arg in args:
                 print(arg)
                 stage_key = arg['stage_key']
@@ -890,9 +880,10 @@ class DLscanWindow(QtWidgets.QWidget):
                     self._setStepsize(stage_key, arg['stepsize']) # instead of this we just have to set step size
                     self.startPos = start
                 if arg['subdir']:
-                    subdir = '\\{0:.1f}'.format(start)
-            #print(self.stageBoss.stages)
-            #print(self.stageBoss.stageValues)
+                    if arg['subdirname'] != None:
+                        subdir = '\\{0}'.format(arg['subdirname'])
+                    else:
+                        subdir = '\\{0:.1f}'.format(start)
             self.commandQueue.append(self._lambMill(self._update_scan_numbers, r = RDS[0], d = RDS[1], s = RDS[2]))
             self.commandQueue.append(self._lambMill(self.hippo.startFile, subdir = subdir, r = RDS[0], d = RDS[1], s = RDS[2]))
             self.commandQueue.append(self._lambMill(self._addWaitTime, 4.0))
