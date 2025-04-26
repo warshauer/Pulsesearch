@@ -64,11 +64,3 @@ python instrumentControl.py
 ## Contributing
 
 Honestly I love this program, and it has made data acquisition so much kinder than previous labVIEW programs we were stuck on. This framework should be easily adjusted to work for many other types of optical measurements, whether it be equilibrium or nonequilibrium, THz or optical probe. For anyone who is interested in adapting this for their use or intending to design something similar, please let me know if I can help at all. -warsh
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgments
-
-Special thanks to the contributors and the open-source community for their support in making this project possible.
